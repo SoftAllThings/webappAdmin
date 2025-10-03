@@ -167,28 +167,62 @@ export const BRISTOL_TYPES = {
 } as const;
 
 export const CONSISTENCY_TYPES = {
-  0: "Very hard",
-  1: "Hard",
+  0: "Hard",
+  1: "Soft",
   2: "Normal",
-  3: "Soft",
-  4: "Very soft",
+  3: "Liquid",
 } as const;
 
 export const SHAPE_TYPES = {
-  0: "Normal",
+  0: "Sausage",
   1: "Lumpy",
-  2: "Smooth",
-  3: "Cracked",
-  4: "Fragmented",
+  2: "Flat",
+  3: "Blob",
+  4: "Liquid",
 } as const;
 
 export const COLOR_TYPES = {
-  0: "Brown",
-  1: "Dark brown",
-  2: "Light brown",
+  0: "Black",
+  1: "White",
+  2: "Green",
   3: "Yellow",
-  4: "Green",
-  5: "Black",
-  6: "Red",
-  7: "Other",
+  4: "Red",
+  5: "Brown",
+  6: "Orange",
+} as const;
+
+export const QUANTITY_TYPES = {
+  0: "Small",
+  1: "Normal",
+  2: "Large",
+} as const;
+
+export const HEALTH_TYPES = {
+  0: "Healthy",
+  1: "Unhealthy",
+} as const;
+
+export const MUCUS_TYPES = {
+  0: "None",
+  1: "Trace",
+  2: "Moderate",
+  3: "High",
+} as const;
+
+export const BLOOD_TYPES = {
+  0: "None",
+  1: "Trace",
+  2: "Moderate",
+  3: "High",
+} as const;
+
+export const FLOATING_TYPES = {
+  0: "Sink",
+  1: "Float",
+} as const;
+
+export const CONDITIONS_TYPES = {
+  0: "Low",
+  1: "Moderate",
+  2: "High",
 } as const;

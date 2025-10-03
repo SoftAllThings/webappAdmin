@@ -24,6 +24,11 @@ import {
   CONSISTENCY_TYPES,
   SHAPE_TYPES,
   COLOR_TYPES,
+  QUANTITY_TYPES,
+  HEALTH_TYPES,
+  MUCUS_TYPES,
+  BLOOD_TYPES,
+  FLOATING_TYPES,
 } from "../types/poop";
 import { usePoopCrud } from "../hooks/usePoopData";
 
