@@ -15,11 +15,6 @@ import {
   CONSISTENCY_TYPES,
   SHAPE_TYPES,
   COLOR_TYPES,
-  QUANTITY_TYPES,
-  HEALTH_TYPES,
-  MUCUS_TYPES,
-  BLOOD_TYPES,
-  FLOATING_TYPES,
 } from "../types/poop";
 
 interface PoopRecordCardProps {
@@ -55,34 +50,6 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
 
   const getColorLabel = (color: number) => {
     return COLOR_TYPES[color as keyof typeof COLOR_TYPES] || `Color ${color}`;
-  };
-
-  const getQuantityLabel = (quantity: number) => {
-    return (
-      QUANTITY_TYPES[quantity as keyof typeof QUANTITY_TYPES] ||
-      `Quantity ${quantity}`
-    );
-  };
-
-  const getHealthLabel = (health: number) => {
-    return (
-      HEALTH_TYPES[health as keyof typeof HEALTH_TYPES] || `Health ${health}`
-    );
-  };
-
-  const getMucusLabel = (mucus: number) => {
-    return MUCUS_TYPES[mucus as keyof typeof MUCUS_TYPES] || `Mucus ${mucus}`;
-  };
-
-  const getBloodLabel = (blood: number) => {
-    return BLOOD_TYPES[blood as keyof typeof BLOOD_TYPES] || `Blood ${blood}`;
-  };
-
-  const getFloatingLabel = (floating: number) => {
-    return (
-      FLOATING_TYPES[floating as keyof typeof FLOATING_TYPES] ||
-      `Floating ${floating}`
-    );
   };
 
   return (
