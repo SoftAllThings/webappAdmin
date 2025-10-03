@@ -5,8 +5,7 @@ import {
   PoopDetailResponse,
 } from "../types/poop";
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:3001/api";
+const API_BASE_URL = "https://webappadminbe.onrender.com/api";
 
 class PoopApiService {
   private async fetchApi<T>(
