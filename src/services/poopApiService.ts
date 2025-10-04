@@ -8,6 +8,47 @@ import {
 const API_BASE_URL = "https://webappadminbe.onrender.com/api";
 
 class PoopApiService {
+  private isWakeUpAttempted = false;
+
+  // Wake up the service if it's sleeping (Render free tier)
+  private async wakeUpService(): Promise<void> {
+    console.log("🔄 Attempting to wake up service...");
+
+    if (this.isWakeUpAttempted) {
+      console.log("⏭️ Wake up already attempted, skipping");
+      return;
+    }
+
+    try {
+      this.isWakeUpAttempted = true;
+      console.log("📡 Sending wake-up request to:", `${API_BASE_URL}/health`);
+
+      const response = await fetch(`${API_BASE_URL}/health`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log("📥 Wake-up response status:", response.status);
+
+      if (response.ok) {
+        console.log("✅ Service is awake and responding");
+      } else {
+        console.log(
+          "⚠️ Service responded but with error status:",
+          response.status
+        );
+      }
+    } catch (error) {
+      console.log(
+        "❌ Wake up attempt failed, service might be starting...",
+        error
+      );
+      // Wait a bit for the service to start
+      console.log("⏰ Waiting 3 seconds for service to start...");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  }
+
   private async fetchApi<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -48,6 +89,10 @@ class PoopApiService {
     page: number = 1,
     limit: number = 10
   ): Promise<PoopListResponse> {
+    console.log("🚀 getAllPoops called - starting wake-up process");
+    // Wake up the service first (for Render free tier)
+    await this.wakeUpService();
+    console.log("🎯 Wake-up complete, making data request");
     return this.fetchApi<PoopListResponse>(`/poop?page=${page}&limit=${limit}`);
   }
 

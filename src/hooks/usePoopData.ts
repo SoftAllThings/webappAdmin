@@ -11,12 +11,15 @@ export const usePoopRecords = (page: number = 1, limit: number = 10) => {
 
   const fetchRecords = useCallback(async () => {
     try {
+      console.log("🎣 usePoopRecords: Starting to fetch records");
       setLoading(true);
       setError(null);
       const response = await poopApiService.getAllPoops(page, limit);
+      console.log("📊 usePoopRecords: Received response", response);
       setRecords(response.data || []);
       setTotalRecords(response.meta.total);
     } catch (err) {
+      console.error("❌ usePoopRecords: Error fetching records", err);
       setError(err instanceof Error ? err.message : "Failed to fetch records");
       setRecords([]);
     } finally {
