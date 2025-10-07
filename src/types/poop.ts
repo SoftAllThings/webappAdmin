@@ -226,3 +226,29 @@ export const CONDITIONS_TYPES = {
   1: "Moderate",
   2: "High",
 } as const;
+
+// All the medical condition fields that use CONDITIONS_TYPES mapping
+export const CONDITIONS_FEATURES = [
+  "liver_flukes",
+  "colon_cancer",
+  "hemorrhoids",
+  "anal_fissures",
+  "crohns_disease",
+  "ulcerative_colitis",
+  "celiac_disease",
+  "gallbladder_disease",
+  "pancreatitis",
+  "liver_disease",
+  "upper_gastrointestinal_bleeding",
+  "gastrointestinal_infection",
+  "lactose_intolerance",
+  "food_poisoning",
+  "diverticulitis",
+  "irritable_bowel_syndrome",
+  "constipation",
+  "dehydration",
+  "hypothyroidism",
+  "bile_duct_obstruction",
+  "malabsorption_syndrome",
+  "rapid_gastrointestinal_transit",
+] as const;

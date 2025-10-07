@@ -8,6 +8,9 @@ import {
   Box,
   Grid,
   Divider,
+  useTheme,
+  useMediaQuery,
+  Stack,
 } from "@mui/material";
 import {
   PoopRecord,
@@ -15,6 +18,11 @@ import {
   CONSISTENCY_TYPES,
   SHAPE_TYPES,
   COLOR_TYPES,
+  QUANTITY_TYPES,
+  HEALTH_TYPES,
+  MUCUS_TYPES,
+  BLOOD_TYPES,
+  FLOATING_TYPES,
 } from "../types/poop";
 
 interface PoopRecordCardProps {
@@ -23,6 +31,11 @@ interface PoopRecordCardProps {
 }
 
 const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  console.log("🃏 Card: Rendering record:", record);
+
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
@@ -30,7 +43,10 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
 
   const formatTime = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleTimeString();
+    return new Date(dateString).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const getBristolLabel = (type: number) => {
@@ -52,108 +68,207 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
     return COLOR_TYPES[color as keyof typeof COLOR_TYPES] || `Color ${color}`;
   };
 
+  const getQuantityLabel = (quantity: number) => {
+    return (
+      QUANTITY_TYPES[quantity as keyof typeof QUANTITY_TYPES] ||
+      `Quantity ${quantity}`
+    );
+  };
+
+  const getHealthLabel = (health: number) => {
+    return (
+      HEALTH_TYPES[health as keyof typeof HEALTH_TYPES] || `Health ${health}`
+    );
+  };
+
+  const getMucusLabel = (mucus: number) => {
+    return MUCUS_TYPES[mucus as keyof typeof MUCUS_TYPES] || `Mucus ${mucus}`;
+  };
+
+  const getBloodLabel = (blood: number) => {
+    return BLOOD_TYPES[blood as keyof typeof BLOOD_TYPES] || `Blood ${blood}`;
+  };
+
+  const getFloatingLabel = (floating: number) => {
+    return (
+      FLOATING_TYPES[floating as keyof typeof FLOATING_TYPES] ||
+      `Floating ${floating}`
+    );
+  };
+
+  const getHealthColor = (health: number) => {
+    return health === 0 ? "success" : "warning";
+  };
+
+  const getSeverityColor = (level: number, maxLevel: number = 3) => {
+    if (level === 0) return "success";
+    if (level === 1) return "warning";
+    if (level >= 2) return "error";
+    return "default";
+  };
+
   return (
     <Card
       sx={{
-        maxWidth: 400,
+        height: "100%",
         cursor: onClick ? "pointer" : "default",
-        "&:hover": onClick ? { elevation: 8 } : undefined,
+        "&:hover": onClick
+          ? {
+              elevation: 8,
+              transform: "translateY(-2px)",
+              transition: "all 0.2s ease-in-out",
+            }
+          : undefined,
+        display: "flex",
+        flexDirection: "column",
       }}
       onClick={onClick}
     >
       {record.s3_url && (
         <CardMedia
           component="img"
-          height="200"
+          height={isMobile ? "150" : "200"}
           image={record.s3_url}
           alt={`Poop record ${record.id}`}
-          sx={{ objectFit: "cover" }}
+          sx={{ objectFit: "contain" }}
         />
       )}
 
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1, p: isMobile ? 1.5 : 2 }}>
+        {/* Header with date and verification */}
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" component="div" gutterBottom>
-            Record ID: {record.id.slice(-8)}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Created: {formatDate(record.created_at)} at{" "}
-            {formatTime(record.created_at)}
-          </Typography>
-        </Box>
-
-        <Divider sx={{ my: 2 }} />
-
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
-            <Chip
-              label={`Bristol Type ${record.bristol_type}: ${getBristolLabel(
-                record.bristol_type
-              )}`}
-              color="primary"
-              size="small"
-              sx={{ mb: 1 }}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="body2">
-              <strong>Consistency:</strong>{" "}
-              {getConsistencyLabel(record.consistency)}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              variant={isMobile ? "body2" : "body1"}
+              color="text.secondary"
+            >
+              {formatDate(record.created_at)}
             </Typography>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="body2">
-              <strong>Shape:</strong> {getShapeLabel(record.shape)}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="body2">
-              <strong>Color:</strong> {getColorLabel(record.color)}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="body2">
-              <strong>Quantity:</strong> {record.quantity}
-            </Typography>
-          </Grid>
-        </Grid>
-
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Health Indicators:</strong>
-          </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
-            {record.blood > 0 && (
-              <Chip
-                label={`Blood: ${record.blood}`}
-                size="small"
-                color="error"
-              />
-            )}
-            {record.mucus > 0 && (
-              <Chip
-                label={`Mucus: ${record.mucus}`}
-                size="small"
-                color="warning"
-              />
-            )}
-            {record.floating > 0 && (
-              <Chip label="Floating" size="small" color="info" />
-            )}
             {record.verified && (
-              <Chip label="Verified" size="small" color="success" />
+              <Chip
+                label="✓ Verified"
+                color="success"
+                size="small"
+                sx={{ fontSize: "0.7rem" }}
+              />
             )}
-          </Box>
+          </Stack>
+          {!isMobile && (
+            <Typography variant="caption" color="text.secondary">
+              {formatTime(record.created_at)}
+            </Typography>
+          )}
         </Box>
 
-        {record.gpt_bristol_type && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
-              <strong>AI Analysis:</strong> {record.gpt_bristol_type}
+        <Divider sx={{ my: 1.5 }} />
+
+        {/* Primary Information */}
+        <Stack spacing={1} sx={{ mb: 2 }}>
+          <Chip
+            label={`Bristol ${record.bristol_type}: ${getBristolLabel(
+              record.bristol_type
+            )}`}
+            color="primary"
+            size={isMobile ? "small" : "medium"}
+            sx={{
+              fontSize: isMobile ? "0.7rem" : "0.8rem",
+              height: isMobile ? 24 : 32,
+            }}
+          />
+
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <Chip
+              label={getConsistencyLabel(record.consistency)}
+              variant="outlined"
+              size="small"
+              sx={{ fontSize: "0.7rem" }}
+            />
+            <Chip
+              label={getColorLabel(record.color)}
+              variant="outlined"
+              size="small"
+              sx={{ fontSize: "0.7rem" }}
+            />
+            <Chip
+              label={getQuantityLabel(record.quantity)}
+              variant="outlined"
+              size="small"
+              sx={{ fontSize: "0.7rem" }}
+            />
+          </Stack>
+        </Stack>
+
+        {/* Health and Alerts */}
+        <Stack spacing={1}>
+          <Chip
+            label={`Health: ${getHealthLabel(record.health)}`}
+            color={getHealthColor(record.health) as any}
+            size="small"
+            sx={{ fontSize: "0.7rem" }}
+          />
+
+          {/* Show blood/mucus if present */}
+          {(record.blood > 0 || record.mucus > 0) && (
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              {record.blood > 0 && (
+                <Chip
+                  label={`Blood: ${getBloodLabel(record.blood)}`}
+                  color={getSeverityColor(record.blood) as any}
+                  size="small"
+                  sx={{ fontSize: "0.65rem" }}
+                />
+              )}
+              {record.mucus > 0 && (
+                <Chip
+                  label={`Mucus: ${getMucusLabel(record.mucus)}`}
+                  color={getSeverityColor(record.mucus) as any}
+                  size="small"
+                  sx={{ fontSize: "0.65rem" }}
+                />
+              )}
+            </Stack>
+          )}
+
+          {/* Additional details in mobile compact view */}
+          {!isMobile && (
+            <Grid container spacing={1} sx={{ mt: 1 }}>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Shape: {getShapeLabel(record.shape)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  {getFloatingLabel(record.floating)}
+                </Typography>
+              </Grid>
+              {(record.smell_level > 0 || record.pain_level > 0) && (
+                <>
+                  <Grid item xs={6}>
+                    <Typography variant="caption" color="text.secondary">
+                      Smell: {record.smell_level}/10
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="caption" color="text.secondary">
+                      Pain: {record.pain_level}/10
+                    </Typography>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          )}
+        </Stack>
+
+        {/* Mobile compact additional info */}
+        {isMobile && (record.smell_level > 0 || record.pain_level > 0) && (
+          <Box sx={{ mt: 1 }}>
+            <Typography variant="caption" color="text.secondary">
+              Smell: {record.smell_level}/10 • Pain: {record.pain_level}/10
             </Typography>
           </Box>
         )}

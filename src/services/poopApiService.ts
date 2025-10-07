@@ -55,9 +55,13 @@ class PoopApiService {
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
 
+    // Get auth token from localStorage
+    const token = localStorage.getItem("authToken");
+
     const defaultOptions: RequestInit = {
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
     };
@@ -68,6 +72,12 @@ class PoopApiService {
       const response = await fetch(url, config);
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          // Token is invalid, redirect to login
+          localStorage.removeItem("authToken");
+          window.location.reload();
+          throw new Error("Authentication required");
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
