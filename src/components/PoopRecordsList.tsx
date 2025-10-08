@@ -7,11 +7,7 @@ import {
   Alert,
   useMediaQuery,
   useTheme,
-  Stack,
-  Button,
-  Fade,
 } from "@mui/material";
-import { Refresh } from "@mui/icons-material";
 import { useInfinitePoopRecords } from "../hooks/useInfinitePoopData";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
