@@ -147,7 +147,8 @@ export const useInfinitePoopRecords = (
     setPage(nextPage);
     currentPageRef.current = nextPage;
     fetchRecords(nextPage, true);
-  }, []); // No dependencies to prevent re-creation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty - using refs to prevent dependency cycles
 
   const refetch = useCallback(() => {
     console.log("🔄 Refetching data");
@@ -165,7 +166,8 @@ export const useInfinitePoopRecords = (
   useEffect(() => {
     console.log("🚀 Initial useEffect triggered");
     fetchRecords(1, false);
-  }, []); // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty - only run on mount
 
   return {
     records,
