@@ -6,8 +6,10 @@ import {
 } from "../types/poop";
 
 // Use local backend in development, production backend in production
-const API_BASE_URL = "http://localhost:3001/api";
-// For production, change above line to: "https://webappadminbe.onrender.com/api"
+const API_BASE_URL =
+  process.env["NODE_ENV"] === "production"
+    ? "https://webappadminbe.onrender.com/api"
+    : "http://localhost:3001/api";
 
 console.log("🔗 API Base URL:", API_BASE_URL);
 
