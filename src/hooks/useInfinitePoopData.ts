@@ -13,7 +13,8 @@ interface UseInfinitePoopRecordsReturn {
 }
 
 export const useInfinitePoopRecords = (
-  limit: number = 10
+  limit: number = 10,
+  bristolType?: number
 ): UseInfinitePoopRecordsReturn => {
   const [records, setRecords] = useState<PoopRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +63,11 @@ export const useInfinitePoopRecords = (
           setError(null);
         }
 
-        const response = await poopApiService.getAllPoops(pageNum, limit);
+        const response = await poopApiService.getAllPoops(
+          pageNum,
+          limit,
+          bristolType
+        );
         console.log("📦 API Response:", {
           dataLength: response.data?.length,
           metaTotal: response.meta?.total,
@@ -162,12 +167,19 @@ export const useInfinitePoopRecords = (
     fetchRecords(1, false);
   }, [fetchRecords]);
 
-  // Initial load
+  // Initial load and reload when bristolType changes
   useEffect(() => {
-    console.log("🚀 Initial useEffect triggered");
+    console.log("🚀 Initial useEffect triggered for bristolType:", bristolType);
+    setPage(1);
+    currentPageRef.current = 1;
+    setRecords([]);
+    recordsRef.current = [];
+    setHasMore(true);
+    setTotalRecords(0);
+    totalRef.current = 0;
     fetchRecords(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Intentionally empty - only run on mount
+  }, [bristolType]); // Reload when bristolType changes
 
   return {
     records,

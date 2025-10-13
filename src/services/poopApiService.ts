@@ -97,13 +97,20 @@ class PoopApiService {
   // Get all poop records with pagination
   async getAllPoops(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    bristolType?: number
   ): Promise<PoopListResponse> {
     console.log("🚀 getAllPoops called - starting wake-up process");
     // Wake up the service first (for Render free tier)
     await this.wakeUpService();
     console.log("🎯 Wake-up complete, making data request");
-    return this.fetchApi<PoopListResponse>(`/poop?page=${page}&limit=${limit}`);
+
+    let url = `/poop?page=${page}&limit=${limit}`;
+    if (bristolType !== undefined && bristolType !== null) {
+      url += `&bristol_type=${bristolType}`;
+    }
+
+    return this.fetchApi<PoopListResponse>(url);
   }
 
   // Get a single poop record by ID
