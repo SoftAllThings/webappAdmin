@@ -143,14 +143,10 @@ const PoopRecordsList: React.FC = () => {
           {/* Show pagination info and load more */}
           {records.length > 0 && (
             <Box sx={{ mt: 4, mb: 2, textAlign: "center" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mb: 2 }}
-              >
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Showing {records.length} records
               </Typography>
-              
+
               {hasMore && (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   {loadingMore ? (
@@ -159,14 +155,14 @@ const PoopRecordsList: React.FC = () => {
                     <Typography
                       variant="body2"
                       color="primary"
-                      sx={{ 
-                        cursor: "pointer", 
+                      sx={{
+                        cursor: "pointer",
                         textDecoration: "underline",
-                        "&:hover": { 
-                          backgroundColor: "rgba(0, 0, 0, 0.04)" 
+                        "&:hover": {
+                          backgroundColor: "rgba(0, 0, 0, 0.04)",
                         },
                         padding: "8px",
-                        borderRadius: "4px"
+                        borderRadius: "4px",
                       }}
                       onClick={loadMore}
                     >
@@ -175,9 +171,12 @@ const PoopRecordsList: React.FC = () => {
                   )}
                 </Box>
               )}
-              
+
               {/* Intersection observer target */}
-              <div ref={intersectionRef} style={{ height: "20px", marginTop: "20px" }} />
+              <div
+                ref={intersectionRef}
+                style={{ height: "20px", marginTop: "20px" }}
+              />
             </Box>
           )}
         </>
