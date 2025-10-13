@@ -30,15 +30,20 @@ const PoopRecordsList: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { records, loading, loadingMore, error, hasMore, loadMore, refetch } =
-    useInfinitePoopRecords(10, bristolTypeFilter);
+    useInfinitePoopRecords(20, bristolTypeFilter);
 
-  // Intersection observer for infinite scroll
-  const loadMoreRef = useIntersectionObserver(
+  // Set up intersection observer for automatic loading
+  const intersectionRef = useIntersectionObserver(
     () => {
-      console.log("🔄 Intersection triggered");
-      loadMore();
+      if (hasMore && !loading && !loadingMore) {
+        console.log("🚀 Auto-loading more records via intersection observer");
+        loadMore();
+      }
     },
-    { threshold: 0.1, rootMargin: "50px" }
+    {
+      threshold: 0.1,
+      rootMargin: "100px",
+    }
   );
 
   const handleRecordClick = (record: PoopRecord) => {
@@ -58,7 +63,10 @@ const PoopRecordsList: React.FC = () => {
 
   const handleBristolFilterChange = (event: SelectChangeEvent<string>) => {
     const value = event.target.value;
-    setBristolTypeFilter(value === "all" ? undefined : parseInt(value));
+    console.log("🔍 Bristol filter changed to:", value);
+    const newFilter = value === "all" ? undefined : parseInt(value);
+    console.log("🔍 Setting bristolTypeFilter to:", newFilter);
+    setBristolTypeFilter(newFilter);
   };
 
   if (loading) {
@@ -132,31 +140,45 @@ const PoopRecordsList: React.FC = () => {
             ))}
           </Grid>
 
-          {/* Loading more indicator */}
-          {loadingMore && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-              <CircularProgress size={32} />
+          {/* Show pagination info and load more */}
+          {records.length > 0 && (
+            <Box sx={{ mt: 4, mb: 2, textAlign: "center" }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 2 }}
+              >
+                Showing {records.length} records
+              </Typography>
+              
+              {hasMore && (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  {loadingMore ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    <Typography
+                      variant="body2"
+                      color="primary"
+                      sx={{ 
+                        cursor: "pointer", 
+                        textDecoration: "underline",
+                        "&:hover": { 
+                          backgroundColor: "rgba(0, 0, 0, 0.04)" 
+                        },
+                        padding: "8px",
+                        borderRadius: "4px"
+                      }}
+                      onClick={loadMore}
+                    >
+                      Load More Records
+                    </Typography>
+                  )}
+                </Box>
+              )}
+              
+              {/* Intersection observer target */}
+              <div ref={intersectionRef} style={{ height: "20px", marginTop: "20px" }} />
             </Box>
-          )}
-
-          {/* Invisible element to trigger loading more */}
-          {hasMore && (
-            <div
-              ref={loadMoreRef}
-              style={{ height: "20px", margin: "20px 0" }}
-            />
-          )}
-
-          {/* End of data indicator */}
-          {!hasMore && records.length > 0 && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              sx={{ mt: 4, mb: 2 }}
-            >
-              All records loaded
-            </Typography>
           )}
         </>
       )}

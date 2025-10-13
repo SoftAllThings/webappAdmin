@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { PoopRecord, CreatePoopRecord, UpdatePoopRecord } from "../types/poop";
 import { poopApiService } from "../services/poopApiService";
 
-// Hook for fetching all poop records with pagination
-export const usePoopRecords = (page: number = 1, limit: number = 10) => {
+// Hook for fetching all poop records with Bristol Type filtering
+export const usePoopRecords = (bristolType?: number) => {
   const [records, setRecords] = useState<PoopRecord[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -11,10 +11,15 @@ export const usePoopRecords = (page: number = 1, limit: number = 10) => {
 
   const fetchRecords = useCallback(async () => {
     try {
-      console.log("🎣 usePoopRecords: Starting to fetch records");
+      console.log(
+        "🎣 usePoopRecords: Starting to fetch records with bristolType:",
+        bristolType
+      );
       setLoading(true);
       setError(null);
-      const response = await poopApiService.getAllPoops(page, limit);
+
+      // Fetch maximum 100 records at once
+      const response = await poopApiService.getAllPoops(1, 100, bristolType);
       console.log("📊 usePoopRecords: Received response", response);
       setRecords(response.data || []);
       setTotalRecords(response.meta.total);
@@ -25,7 +30,7 @@ export const usePoopRecords = (page: number = 1, limit: number = 10) => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit]);
+  }, [bristolType]);
 
   useEffect(() => {
     fetchRecords();

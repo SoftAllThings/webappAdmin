@@ -5,13 +5,24 @@ import {
   PoopDetailResponse,
 } from "../types/poop";
 
-const API_BASE_URL = "https://webappadminbe.onrender.com/api";
+// Use local backend in development, production backend in production
+const API_BASE_URL = "http://localhost:3001/api";
+// For production, change above line to: "https://webappadminbe.onrender.com/api"
+
+console.log("🔗 API Base URL:", API_BASE_URL);
 
 class PoopApiService {
   private isWakeUpAttempted = false;
 
   // Wake up the service if it's sleeping (Render free tier)
+  // Skip wake-up for local development
   private async wakeUpService(): Promise<void> {
+    // Skip wake-up for local development
+    if (process.env["NODE_ENV"] === "development") {
+      console.log("🏠 Local development mode - skipping wake-up");
+      return;
+    }
+
     console.log("🔄 Attempting to wake up service...");
 
     if (this.isWakeUpAttempted) {
@@ -100,7 +111,7 @@ class PoopApiService {
     limit: number = 10,
     bristolType?: number
   ): Promise<PoopListResponse> {
-    console.log("🚀 getAllPoops called - starting wake-up process");
+    console.log("🚀 getAllPoops called with:", { page, limit, bristolType });
     // Wake up the service first (for Render free tier)
     await this.wakeUpService();
     console.log("🎯 Wake-up complete, making data request");
@@ -108,8 +119,10 @@ class PoopApiService {
     let url = `/poop?page=${page}&limit=${limit}`;
     if (bristolType !== undefined && bristolType !== null) {
       url += `&bristol_type=${bristolType}`;
+      console.log("🔍 Adding bristol_type filter:", bristolType);
     }
 
+    console.log("📡 Final URL:", url);
     return this.fetchApi<PoopListResponse>(url);
   }
 

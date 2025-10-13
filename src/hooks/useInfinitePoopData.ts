@@ -13,7 +13,7 @@ interface UseInfinitePoopRecordsReturn {
 }
 
 export const useInfinitePoopRecords = (
-  limit: number = 10,
+  limit: number = 20,
   bristolType?: number
 ): UseInfinitePoopRecordsReturn => {
   const [records, setRecords] = useState<PoopRecord[]>([]);
@@ -127,7 +127,7 @@ export const useInfinitePoopRecords = (
         isLoadingRef.current = false;
       }
     },
-    [limit] // Only limit as dependency
+    [limit, bristolType] // Include bristolType as dependency
   );
 
   const loadMore = useCallback(() => {
@@ -169,7 +169,7 @@ export const useInfinitePoopRecords = (
 
   // Initial load and reload when bristolType changes
   useEffect(() => {
-    console.log("🚀 Initial useEffect triggered for bristolType:", bristolType);
+    console.log("🚀 useEffect triggered for bristolType:", bristolType);
     setPage(1);
     currentPageRef.current = 1;
     setRecords([]);

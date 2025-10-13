@@ -23,7 +23,7 @@ export const useIntersectionObserver = (
   const handleIntersect = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
-      if (entry.isIntersecting) {
+      if (entry && entry.isIntersecting) {
         const now = Date.now();
 
         // Prevent rapid calls (1 second debounce)
