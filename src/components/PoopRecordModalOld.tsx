@@ -261,21 +261,6 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
             />
           </Grid>
 
-          {/* Verified */}
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.verified || false}
-                  onChange={(e) =>
-                    handleInputChange("verified", e.target.checked)
-                  }
-                />
-              }
-              label="Verified Record"
-            />
-          </Grid>
-
           {/* GPT Bristol Type */}
           <Grid item xs={12}>
             <TextField

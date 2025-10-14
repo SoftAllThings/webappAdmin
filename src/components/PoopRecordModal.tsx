@@ -11,8 +11,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Switch,
   Box,
   Typography,
   Alert,
@@ -76,10 +74,8 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
         blood: record.blood ?? 0,
         mucus: record.mucus ?? 0,
         floating: record.floating ?? 0,
-        smell_level: record.smell_level ?? 0,
-        pain_level: record.pain_level ?? 0,
-        duration: record.duration ?? 0,
-        verified: record.verified ?? false,
+        // Keep image_good_for_ml as is (null, true, or false) - convert undefined to null
+        image_good_for_ml: record.image_good_for_ml ?? null,
         // Initialize all condition fields
         liver_flukes: record.liver_flukes ?? 0,
         colon_cancer: record.colon_cancer ?? 0,
@@ -200,6 +196,47 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
             />
           </Box>
         )}
+
+        {/* ML Training Flag - Most Important Field */}
+        <Box
+          sx={{
+            mb: 3,
+            p: 2,
+          }}
+        >
+          <Typography
+            variant="h6"
+            gutterBottom
+            color="primary"
+            sx={{ fontWeight: "bold" }}
+          >
+            Machine Learning Training
+          </Typography>
+          <FormControl fullWidth>
+            <InputLabel>Is this image good for ML training?</InputLabel>
+            <Select
+              value={
+                formData.image_good_for_ml === null
+                  ? ""
+                  : formData.image_good_for_ml
+                  ? "true"
+                  : "false"
+              }
+              label="Is this image good for ML training?"
+              onChange={(e) => {
+                const value = e.target.value;
+                let newValue: boolean | null = null;
+                if (value === "true") newValue = true;
+                else if (value === "false") newValue = false;
+                handleInputChange("image_good_for_ml", newValue);
+              }}
+            >
+              <MenuItem value="">Not Set</MenuItem>
+              <MenuItem value="true">✅ Yes - Good for ML</MenuItem>
+              <MenuItem value="false">❌ No - Not good for ML</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
         <Grid container spacing={3}>
           {/* Basic Information */}
@@ -403,58 +440,43 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
             </FormControl>
           </Grid>
 
-          {/* Numeric Fields */}
+          {/* Non-editable Fields */}
+          <Grid item xs={12}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              color="primary"
+              sx={{ mt: 2 }}
+            >
+              Record Information
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+          </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Smell Level (0-10)"
-              type="number"
-              inputProps={{ min: 0, max: 10 }}
-              value={formData.smell_level ?? ""}
-              onChange={(e) =>
-                handleInputChange("smell_level", Number(e.target.value))
-              }
+              label="Record ID"
+              value={formData.id || ""}
+              disabled
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Pain Level (0-10)"
-              type="number"
-              inputProps={{ min: 0, max: 10 }}
-              value={formData.pain_level ?? ""}
-              onChange={(e) =>
-                handleInputChange("pain_level", Number(e.target.value))
-              }
+              label="Created At"
+              value={formData.created_at || ""}
+              disabled
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Duration (minutes)"
-              type="number"
-              inputProps={{ min: 0 }}
-              value={formData.duration ?? ""}
-              onChange={(e) =>
-                handleInputChange("duration", Number(e.target.value))
-              }
-            />
-          </Grid>
-
-          {/* Verified Switch */}
-          <Grid item xs={12} sm={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.verified || false}
-                  onChange={(e) =>
-                    handleInputChange("verified", e.target.checked)
-                  }
-                />
-              }
-              label="Verified"
+              label="Updated At"
+              value={formData.updated_at || ""}
+              disabled
             />
           </Grid>
 

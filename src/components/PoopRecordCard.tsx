@@ -148,14 +148,6 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
             >
               {formatDate(record.created_at)}
             </Typography>
-            {record.verified && (
-              <Chip
-                label="✓ Verified"
-                color="success"
-                size="small"
-                sx={{ fontSize: "0.7rem" }}
-              />
-            )}
           </Stack>
           {!isMobile && (
             <Typography variant="caption" color="text.secondary">
@@ -246,32 +238,9 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
                   {getFloatingLabel(record.floating)}
                 </Typography>
               </Grid>
-              {(record.smell_level > 0 || record.pain_level > 0) && (
-                <>
-                  <Grid item xs={6}>
-                    <Typography variant="caption" color="text.secondary">
-                      Smell: {record.smell_level}/10
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="caption" color="text.secondary">
-                      Pain: {record.pain_level}/10
-                    </Typography>
-                  </Grid>
-                </>
-              )}
             </Grid>
           )}
         </Stack>
-
-        {/* Mobile compact additional info */}
-        {isMobile && (record.smell_level > 0 || record.pain_level > 0) && (
-          <Box sx={{ mt: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              Smell: {record.smell_level}/10 • Pain: {record.pain_level}/10
-            </Typography>
-          </Box>
-        )}
       </CardContent>
     </Card>
   );

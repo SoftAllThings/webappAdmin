@@ -144,9 +144,6 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
             {record.floating > 0 && (
               <Chip label="Floating" size="small" color="info" />
             )}
-            {record.verified && (
-              <Chip label="Verified" size="small" color="success" />
-            )}
           </Box>
         </Box>
 
