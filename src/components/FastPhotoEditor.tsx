@@ -201,7 +201,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
             <Close />
           </IconButton>
           <Typography variant="h6" fontWeight="bold">
-            Photo {currentIndex + 1} / {records.length}
+            {currentIndex + 1} / {records.length}
           </Typography>
         </Box>
 
