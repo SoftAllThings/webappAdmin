@@ -16,12 +16,12 @@ import {
 import { useInfinitePoopRecords } from "../hooks/useInfinitePoopData";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
-import PoopRecordModal from "./PoopRecordModal";
+import FastPhotoEditor from "./FastPhotoEditor";
 import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
 
 const PoopRecordsList: React.FC = () => {
-  const [selectedRecord, setSelectedRecord] = useState<PoopRecord | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [bristolTypeFilter, setBristolTypeFilter] = useState<
     number | undefined
   >(undefined);
@@ -47,18 +47,19 @@ const PoopRecordsList: React.FC = () => {
   );
 
   const handleRecordClick = (record: PoopRecord) => {
-    setSelectedRecord(record);
-    setModalOpen(true);
+    const index = records.findIndex((r) => r.id === record.id);
+    if (index !== -1) {
+      setSelectedIndex(index);
+      setEditorOpen(true);
+    }
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedRecord(null);
+  const handleEditorClose = () => {
+    setEditorOpen(false);
   };
 
   const handleRecordUpdate = () => {
     refetch(); // Refresh the list after update
-    handleModalClose();
   };
 
   const handleBristolFilterChange = (event: SelectChangeEvent<string>) => {
@@ -92,13 +93,20 @@ const PoopRecordsList: React.FC = () => {
 
   return (
     <Box>
-      <Typography
-        variant={isMobile ? "h5" : "h4"}
-        component="h1"
-        sx={{ mb: 3 }}
-      >
-        Records ({records.length})
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, flexWrap: "wrap", gap: 1 }}>
+        <Typography
+          variant={isMobile ? "h5" : "h4"}
+          component="h1"
+          sx={{ fontWeight: 600 }}
+        >
+          Records ({records.length})
+        </Typography>
+        {isMobile && records.length > 0 && (
+          <Typography variant="caption" color="text.secondary" sx={{ fontStyle: "italic" }}>
+            Tap to edit
+          </Typography>
+        )}
+      </Box>
 
       {/* Bristol Type Filter */}
       <Box sx={{ mb: 3 }}>
@@ -124,14 +132,14 @@ const PoopRecordsList: React.FC = () => {
       </Box>
 
       {records.length === 0 ? (
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
           No records found.
         </Typography>
       ) : (
         <>
-          <Grid container spacing={isMobile ? 2 : 3}>
+          <Grid container spacing={isMobile ? 1.5 : 3}>
             {records.map((record) => (
-              <Grid item xs={12} sm={6} lg={4} key={record.id}>
+              <Grid item xs={12} sm={6} md={4} key={record.id}>
                 <PoopRecordCard
                   record={record}
                   onClick={() => handleRecordClick(record)}
@@ -182,10 +190,11 @@ const PoopRecordsList: React.FC = () => {
         </>
       )}
 
-      <PoopRecordModal
-        open={modalOpen}
-        record={selectedRecord}
-        onClose={handleModalClose}
+      <FastPhotoEditor
+        open={editorOpen}
+        records={records}
+        initialIndex={selectedIndex}
+        onClose={handleEditorClose}
         onUpdate={handleRecordUpdate}
       />
     </Box>

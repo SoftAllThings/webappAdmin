@@ -25,7 +25,7 @@ const theme = createTheme({
       main: "#dc004e",
     },
   },
-  // Make it mobile-friendly
+  // Mobile-first breakpoints
   breakpoints: {
     values: {
       xs: 0,
@@ -33,6 +33,22 @@ const theme = createTheme({
       md: 960,
       lg: 1280,
       xl: 1920,
+    },
+  },
+  typography: {
+    // Optimize font sizes for mobile
+    fontSize: 14,
+    h4: {
+      fontSize: "1.5rem",
+      "@media (min-width:600px)": {
+        fontSize: "2rem",
+      },
+    },
+    h6: {
+      fontSize: "1rem",
+      "@media (min-width:600px)": {
+        fontSize: "1.25rem",
+      },
     },
   },
   components: {
@@ -48,6 +64,24 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          // Larger touch targets for mobile
+          minHeight: 44,
+          textTransform: "none",
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          // Larger touch targets for mobile
+          minWidth: 44,
+          minHeight: 44,
+        },
+      },
+    },
   },
 });
 
@@ -57,33 +91,36 @@ const AuthenticatedApp: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" elevation={1}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+      <AppBar position="sticky" elevation={2}>
+        <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
             {isMobile ? "PoopCheck" : "PoopCheck Admin"}
           </Typography>
           <Button
             color="inherit"
             onClick={logout}
-            startIcon={<LogoutOutlined />}
-            size={isMobile ? "small" : "medium"}
+            startIcon={!isMobile && <LogoutOutlined />}
+            sx={{
+              minWidth: isMobile ? 44 : "auto",
+            }}
           >
-            {isMobile ? "" : "Logout"}
+            {isMobile ? <LogoutOutlined /> : "Logout"}
           </Button>
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
-        <Box sx={{ mb: { xs: 2, md: 4 } }}>
-          <Typography
-            variant={isMobile ? "h4" : "h2"}
-            component="h1"
-            gutterBottom
-            align="center"
-          >
-            {isMobile ? "Admin Panel" : "PoopCheck Admin"}
-          </Typography>
-          {!isMobile && (
+      <Container maxWidth="lg" sx={{ py: { xs: 1.5, sm: 2, md: 4 }, px: { xs: 1, sm: 2 } }}>
+        {!isMobile && (
+          <Box sx={{ mb: { xs: 2, md: 4 } }}>
+            <Typography
+              variant="h2"
+              component="h1"
+              gutterBottom
+              align="center"
+              sx={{ fontWeight: 600 }}
+            >
+              PoopCheck Admin
+            </Typography>
             <Typography
               variant="h6"
               component="p"
@@ -91,10 +128,10 @@ const AuthenticatedApp: React.FC = () => {
               align="center"
               color="text.secondary"
             >
-              Manage and analyze poop records with images and health data
+              Manage and analyze records with images and health data
             </Typography>
-          )}
-        </Box>
+          </Box>
+        )}
 
         <PoopRecordsList />
       </Container>
