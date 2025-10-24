@@ -170,26 +170,6 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
     onClose();
   }, [hasChanges, saveInBackground, onUpdate, onClose]);
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (!open) return;
-
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        goToNext();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        goToPrevious();
-      } else if (e.key === "Escape") {
-        handleClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [open, goToNext, goToPrevious, handleClose]);
-
   if (!open || !currentRecord) return null;
 
   return (
