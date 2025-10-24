@@ -24,6 +24,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const checkAuth = async () => {
       const storedToken = localStorage.getItem("authToken");
       if (storedToken) {
+        // Trust the stored token - we'll validate on first API call
+        setToken(storedToken);
+        setIsAuthenticated(true);
+
+        // Optionally verify in background (don't block on it)
         try {
           const response = await fetch(`${API_BASE_URL}/auth/verify`, {
             headers: {
@@ -31,15 +36,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             },
           });
 
-          if (response.ok) {
-            setToken(storedToken);
-            setIsAuthenticated(true);
-          } else {
-            localStorage.removeItem("authToken");
+          if (!response.ok) {
+            console.warn("Token verification failed, will retry on next API call");
           }
         } catch (error) {
-          console.error("Auth verification failed:", error);
-          localStorage.removeItem("authToken");
+          console.warn("Auth verification check failed:", error);
+          // Don't remove token - let it fail on actual API calls if invalid
         }
       }
       setLoading(false);

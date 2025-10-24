@@ -290,7 +290,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         )}
 
         {/* Form */}
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, pb: 8 }}>
           {/* ML Training Flag */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom color="primary">
