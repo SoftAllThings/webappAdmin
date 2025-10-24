@@ -260,8 +260,10 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         ref={contentRef}
         sx={{
           flex: 1,
-          overflow: "auto",
-          WebkitOverflowScrolling: "touch",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          position: "relative",
+          height: 0, // Forces flex child to respect flex parent height
         }}
       >
         {/* Image */}
@@ -269,7 +271,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           <Box
             sx={{
               width: "100%",
-              height: isMobile ? "40vh" : "50vh",
+              minHeight: isMobile ? "300px" : "400px",
+              maxHeight: isMobile ? "40vh" : "50vh",
               bgcolor: "black",
               display: "flex",
               alignItems: "center",
@@ -290,7 +293,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         )}
 
         {/* Form */}
-        <Box sx={{ p: 3, pb: 8 }}>
+        <Box sx={{ p: 3, pb: 16, minHeight: "100vh" }}>
           {/* ML Training Flag */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom color="primary">
@@ -509,14 +512,14 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
             </Grid>
 
             {/* Medical Conditions */}
-            <Grid item xs={12} sx={{ mt: 2 }}>
-              <Accordion>
+            <Grid item xs={12} sx={{ mt: 2, mb: 4 }}>
+              <Accordion disableGutters>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                   <Typography variant="h6">
                     Medical Conditions (Optional)
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ maxHeight: "none" }}>
                   <Grid container spacing={2}>
                     {CONDITIONS_FEATURES.map((condition) => (
                       <Grid item xs={12} sm={6} key={condition}>
