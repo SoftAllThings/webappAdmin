@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Box,
   Button,
@@ -8,9 +8,7 @@ import {
   Select,
   MenuItem,
   Typography,
-  Alert,
   IconButton,
-  Chip,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -59,7 +57,6 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
   const [formData, setFormData] = useState<Partial<PoopRecord>>({});
   const [hasChanges, setHasChanges] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const pendingSaveRef = useRef<Partial<PoopRecord> | null>(null);
   const currentRecordIdRef = useRef<string | null>(null);
 
   const theme = useTheme();
@@ -94,7 +91,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         liver_disease: currentRecord.liver_disease ?? 0,
         upper_gastrointestinal_bleeding:
           currentRecord.upper_gastrointestinal_bleeding ?? 0,
-        gastrointestinal_infection: currentRecord.gastrointestinal_infection ?? 0,
+        gastrointestinal_infection:
+          currentRecord.gastrointestinal_infection ?? 0,
         lactose_intolerance: currentRecord.lactose_intolerance ?? 0,
         food_poisoning: currentRecord.food_poisoning ?? 0,
         diverticulitis: currentRecord.diverticulitis ?? 0,
@@ -135,7 +133,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
   };
 
   // Fire and forget save - don't wait for response
-  const saveInBackground = () => {
+  const saveInBackground = useCallback(() => {
     if (!currentRecordIdRef.current || !hasChanges) return;
 
     // Fire the request and don't wait
@@ -144,9 +142,9 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
     });
 
     setHasChanges(false);
-  };
+  }, [hasChanges, formData, updateRecord]);
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (currentIndex < records.length - 1) {
       // Save current changes in background
       if (hasChanges) {
@@ -155,9 +153,9 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
       // Immediately move to next
       setCurrentIndex((prev) => prev + 1);
     }
-  };
+  }, [currentIndex, records.length, hasChanges, saveInBackground]);
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
       // Save current changes in background
       if (hasChanges) {
@@ -166,16 +164,16 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
       // Immediately move to previous
       setCurrentIndex((prev) => prev - 1);
     }
-  };
+  }, [currentIndex, hasChanges, saveInBackground]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     // Save before closing if there are changes
     if (hasChanges) {
       saveInBackground();
     }
     onUpdate();
     onClose();
-  };
+  }, [hasChanges, saveInBackground, onUpdate, onClose]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -195,7 +193,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [open, currentIndex, hasChanges]);
+  }, [open, goToNext, goToPrevious, handleClose]);
 
   if (!open || !currentRecord) return null;
 
@@ -529,7 +527,9 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                               .replace(/\b\w/g, (l) => l.toUpperCase())}
                           </InputLabel>
                           <Select
-                            value={formData[condition as keyof PoopRecord] ?? ""}
+                            value={
+                              formData[condition as keyof PoopRecord] ?? ""
+                            }
                             label={condition
                               .replace(/_/g, " ")
                               .replace(/\b\w/g, (l) => l.toUpperCase())}
