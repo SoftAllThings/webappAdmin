@@ -48,12 +48,28 @@ interface PoopRecordModalProps {
 
 // Scrollable menu props for all select dropdowns
 const SCROLLABLE_MENU_PROPS = {
+  disableScrollLock: true,
   PaperProps: {
     style: {
-      maxHeight: 300,
+      maxHeight: '60vh',
+      overflow: 'auto' as const,
     },
   },
-};
+  MenuListProps: {
+    style: {
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  },
+  anchorOrigin: {
+    vertical: 'bottom' as const,
+    horizontal: 'left' as const,
+  },
+  transformOrigin: {
+    vertical: 'top' as const,
+    horizontal: 'left' as const,
+  },
+} as const;
 
 const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
   open,
