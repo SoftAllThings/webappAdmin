@@ -12,8 +12,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import {
   ExpandMore,
@@ -58,9 +56,6 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
   const [hasChanges, setHasChanges] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const currentRecordIdRef = useRef<string | null>(null);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const currentRecord = records[currentIndex];
 
@@ -207,21 +202,18 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         bottom: 0,
         bgcolor: "background.default",
         zIndex: 1300,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
       }}
     >
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
           p: 2,
           borderBottom: "1px solid",
           borderColor: "divider",
           bgcolor: "background.paper",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -259,9 +251,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
       <Box
         ref={contentRef}
         sx={{
-          flex: 1,
+          height: "calc(100vh - 73px)",
           overflowY: "auto",
-          overflowX: "hidden",
         }}
       >
         {/* Image */}
@@ -269,21 +260,16 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           <Box
             sx={{
               width: "100%",
-              height: isMobile ? "250px" : "300px",
+              height: "300px",
               bgcolor: "black",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
             }}
           >
-            <Box
-              component="img"
+            <img
               src={formData.s3_url}
               alt="Record"
-              sx={{
-                maxWidth: "100%",
-                maxHeight: "100%",
+              style={{
+                width: "100%",
+                height: "100%",
                 objectFit: "contain",
               }}
             />
@@ -291,7 +277,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         )}
 
         {/* Form */}
-        <Box sx={{ p: 3, pb: 10 }}>
+        <Box sx={{ p: 3, pb: 20 }}>
           {/* ML Training Flag */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom color="primary">
@@ -510,14 +496,14 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
             </Grid>
 
             {/* Medical Conditions */}
-            <Grid item xs={12} sx={{ mt: 2, mb: 4 }}>
-              <Accordion disableGutters>
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                   <Typography variant="h6">
                     Medical Conditions (Optional)
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ maxHeight: "none" }}>
+                <AccordionDetails>
                   <Grid container spacing={2}>
                     {CONDITIONS_FEATURES.map((condition) => (
                       <Grid item xs={12} sm={6} key={condition}>
