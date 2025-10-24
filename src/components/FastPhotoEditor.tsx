@@ -260,10 +260,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         ref={contentRef}
         sx={{
           flex: 1,
-          overflowY: "scroll",
+          overflowY: "auto",
           overflowX: "hidden",
-          position: "relative",
-          height: 0, // Forces flex child to respect flex parent height
         }}
       >
         {/* Image */}
@@ -271,12 +269,12 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           <Box
             sx={{
               width: "100%",
-              minHeight: isMobile ? "300px" : "400px",
-              maxHeight: isMobile ? "40vh" : "50vh",
+              height: isMobile ? "250px" : "300px",
               bgcolor: "black",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              flexShrink: 0,
             }}
           >
             <Box
@@ -293,7 +291,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         )}
 
         {/* Form */}
-        <Box sx={{ p: 3, pb: 16, minHeight: "100vh" }}>
+        <Box sx={{ p: 3, pb: 10 }}>
           {/* ML Training Flag */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom color="primary">
