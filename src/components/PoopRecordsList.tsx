@@ -19,6 +19,15 @@ import PoopRecordCard from "./PoopRecordCard";
 import FastPhotoEditor from "./FastPhotoEditor";
 import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
 
+// Scrollable menu props for all select dropdowns
+const SCROLLABLE_MENU_PROPS = {
+  PaperProps: {
+    style: {
+      maxHeight: 300,
+    },
+  },
+};
+
 const PoopRecordsList: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -120,6 +129,7 @@ const PoopRecordsList: React.FC = () => {
             value={bristolTypeFilter?.toString() || "all"}
             label="Filter by Bristol Type"
             onChange={handleBristolFilterChange}
+            MenuProps={SCROLLABLE_MENU_PROPS}
           >
             <MenuItem value="all">All Types</MenuItem>
             {Object.entries(BRISTOL_TYPES).map(([type, description]) => (

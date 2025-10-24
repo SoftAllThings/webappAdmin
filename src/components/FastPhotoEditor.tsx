@@ -35,6 +35,15 @@ import {
 } from "../types/poop";
 import { usePoopCrud } from "../hooks/usePoopData";
 
+// Scrollable menu props for all select dropdowns
+const SCROLLABLE_MENU_PROPS = {
+  PaperProps: {
+    style: {
+      maxHeight: 300,
+    },
+  },
+};
+
 interface FastPhotoEditorProps {
   open: boolean;
   records: PoopRecord[];
@@ -281,6 +290,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   else if (value === "false") newValue = false;
                   handleInputChange("image_good_for_ml", newValue);
                 }}
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 <MenuItem value="">Not Set</MenuItem>
                 <MenuItem value="true">✅ Yes</MenuItem>
@@ -306,6 +316,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("bristol_type", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(BRISTOL_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -325,6 +336,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("consistency", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(CONSISTENCY_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -344,6 +356,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("shape", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(SHAPE_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -363,6 +376,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("quantity", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(QUANTITY_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -382,6 +396,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("color", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(COLOR_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -401,6 +416,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("health", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(HEALTH_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -427,6 +443,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("blood", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(BLOOD_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -446,6 +463,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("mucus", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(MUCUS_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -465,6 +483,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                   onChange={(e) =>
                     handleInputChange("floating", Number(e.target.value))
                   }
+                  MenuProps={SCROLLABLE_MENU_PROPS}
                 >
                   {Object.entries(FLOATING_TYPES).map(([value, label]) => (
                     <MenuItem key={value} value={value}>
@@ -506,6 +525,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                                 Number(e.target.value)
                               )
                             }
+                            MenuProps={SCROLLABLE_MENU_PROPS}
                           >
                             {Object.entries(CONDITIONS_TYPES).map(
                               ([value, label]) => (

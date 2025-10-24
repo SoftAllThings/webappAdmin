@@ -46,6 +46,15 @@ interface PoopRecordModalProps {
   onUpdate: () => void;
 }
 
+// Scrollable menu props for all select dropdowns
+const SCROLLABLE_MENU_PROPS = {
+  PaperProps: {
+    style: {
+      maxHeight: 300,
+    },
+  },
+};
+
 const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
   open,
   record,
@@ -230,6 +239,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 else if (value === "false") newValue = false;
                 handleInputChange("image_good_for_ml", newValue);
               }}
+              MenuProps={SCROLLABLE_MENU_PROPS}
             >
               <MenuItem value="">Not Set</MenuItem>
               <MenuItem value="true">✅ Yes - Good for ML</MenuItem>
@@ -257,6 +267,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("bristol_type", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(BRISTOL_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -277,6 +288,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("consistency", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(CONSISTENCY_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -297,6 +309,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("shape", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(SHAPE_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -317,6 +330,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("quantity", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(QUANTITY_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -337,6 +351,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("color", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(COLOR_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -357,6 +372,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("health", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(HEALTH_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -390,6 +406,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("blood", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(BLOOD_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -410,6 +427,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("mucus", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(MUCUS_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -430,6 +448,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                 onChange={(e) =>
                   handleInputChange("floating", Number(e.target.value))
                 }
+                MenuProps={SCROLLABLE_MENU_PROPS}
               >
                 {Object.entries(FLOATING_TYPES).map(([value, label]) => (
                   <MenuItem key={value} value={value}>
@@ -509,6 +528,7 @@ const PoopRecordModal: React.FC<PoopRecordModalProps> = ({
                               Number(e.target.value)
                             )
                           }
+                          MenuProps={SCROLLABLE_MENU_PROPS}
                         >
                           {Object.entries(CONDITIONS_TYPES).map(
                             ([value, label]) => (
