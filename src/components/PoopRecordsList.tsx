@@ -19,30 +19,22 @@ import PoopRecordCard from "./PoopRecordCard";
 import FastPhotoEditor from "./FastPhotoEditor";
 import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
 
-// Scrollable menu props for all select dropdowns
+// Scrollable menu props for all select dropdowns - optimized for mobile
 const SCROLLABLE_MENU_PROPS = {
-  disableScrollLock: true,
   PaperProps: {
     style: {
-      maxHeight: '60vh',
-      overflow: 'auto' as const,
+      maxHeight: 'min(400px, 60vh)',
+    },
+    sx: {
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      '& .MuiList-root': {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
     },
   },
-  MenuListProps: {
-    style: {
-      paddingTop: 0,
-      paddingBottom: 0,
-    },
-  },
-  anchorOrigin: {
-    vertical: 'bottom' as const,
-    horizontal: 'left' as const,
-  },
-  transformOrigin: {
-    vertical: 'top' as const,
-    horizontal: 'left' as const,
-  },
-} as const;
+};
 
 const PoopRecordsList: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);

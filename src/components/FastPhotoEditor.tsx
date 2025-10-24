@@ -1,27 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  IconButton,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@mui/material";
-import {
-  ExpandMore,
-  Close,
-  NavigateBefore,
-  NavigateNext,
-} from "@mui/icons-material";
+import { Box, Button, Grid, Typography, IconButton } from "@mui/material";
+import { Close, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import {
   PoopRecord,
-  BRISTOL_TYPES,
   CONSISTENCY_TYPES,
   SHAPE_TYPES,
   COLOR_TYPES,
@@ -34,30 +15,24 @@ import {
   CONDITIONS_FEATURES,
 } from "../types/poop";
 import { usePoopCrud } from "../hooks/usePoopData";
+import ToggleButtonField from "./ToggleButtonField";
 
-// Scrollable menu props for all select dropdowns
-const SCROLLABLE_MENU_PROPS = {
-  disableScrollLock: true,
-  PaperProps: {
-    style: {
-      maxHeight: '60vh',
-      overflow: 'auto' as const,
-    },
-  },
-  MenuListProps: {
-    style: {
-      paddingTop: 0,
-      paddingBottom: 0,
-    },
-  },
-  anchorOrigin: {
-    vertical: 'bottom' as const,
-    horizontal: 'left' as const,
-  },
-  transformOrigin: {
-    vertical: 'top' as const,
-    horizontal: 'left' as const,
-  },
+// ML Training options
+const ML_TRAINING_OPTIONS = {
+  "": "Not Set",
+  true: "✅ Yes",
+  false: "❌ No",
+};
+
+// Simplified Bristol Type labels for toggle buttons
+const BRISTOL_TYPES_SHORT = {
+  1: "Type 1",
+  2: "Type 2",
+  3: "Type 3",
+  4: "Type 4",
+  5: "Type 5",
+  6: "Type 6",
+  7: "Type 7",
 } as const;
 
 interface FastPhotoEditorProps {
@@ -285,34 +260,33 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         <Box sx={{ p: 3, pb: 20 }}>
           {/* ML Training Flag */}
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" gutterBottom color="primary">
+            <Typography
+              variant="h6"
+              gutterBottom
+              color="primary"
+              sx={{ mb: 2 }}
+            >
               ML Training
             </Typography>
-            <FormControl fullWidth>
-              <InputLabel>Good for ML?</InputLabel>
-              <Select
-                value={
-                  formData.image_good_for_ml === null
-                    ? ""
-                    : formData.image_good_for_ml
-                    ? "true"
-                    : "false"
-                }
-                label="Good for ML?"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  let newValue: boolean | null = null;
-                  if (value === "true") newValue = true;
-                  else if (value === "false") newValue = false;
-                  handleInputChange("image_good_for_ml", newValue);
-                }}
-                MenuProps={SCROLLABLE_MENU_PROPS}
-              >
-                <MenuItem value="">Not Set</MenuItem>
-                <MenuItem value="true">✅ Yes</MenuItem>
-                <MenuItem value="false">❌ No</MenuItem>
-              </Select>
-            </FormControl>
+            <ToggleButtonField
+              label="Is this image good for ML training?"
+              value={
+                formData.image_good_for_ml === null
+                  ? ""
+                  : formData.image_good_for_ml
+                  ? "true"
+                  : "false"
+              }
+              options={ML_TRAINING_OPTIONS}
+              onChange={(value) => {
+                const strValue = value.toString();
+                let newValue: boolean | null = null;
+                if (strValue === "true") newValue = true;
+                else if (strValue === "false") newValue = false;
+                handleInputChange("image_good_for_ml", newValue);
+              }}
+              fullWidth
+            />
           </Box>
 
           <Grid container spacing={3}>
@@ -323,124 +297,70 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Bristol Type</InputLabel>
-                <Select
-                  value={formData.bristol_type ?? ""}
-                  label="Bristol Type"
-                  onChange={(e) =>
-                    handleInputChange("bristol_type", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(BRISTOL_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {value}: {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Bristol Type"
+                value={formData.bristol_type}
+                options={BRISTOL_TYPES_SHORT}
+                onChange={(value) =>
+                  handleInputChange("bristol_type", Number(value))
+                }
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Consistency</InputLabel>
-                <Select
-                  value={formData.consistency ?? ""}
-                  label="Consistency"
-                  onChange={(e) =>
-                    handleInputChange("consistency", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(CONSISTENCY_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Consistency"
+                value={formData.consistency}
+                options={CONSISTENCY_TYPES}
+                onChange={(value) =>
+                  handleInputChange("consistency", Number(value))
+                }
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Shape</InputLabel>
-                <Select
-                  value={formData.shape ?? ""}
-                  label="Shape"
-                  onChange={(e) =>
-                    handleInputChange("shape", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(SHAPE_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Shape"
+                value={formData.shape}
+                options={SHAPE_TYPES}
+                onChange={(value) => handleInputChange("shape", Number(value))}
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Quantity</InputLabel>
-                <Select
-                  value={formData.quantity ?? ""}
-                  label="Quantity"
-                  onChange={(e) =>
-                    handleInputChange("quantity", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(QUANTITY_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Quantity"
+                value={formData.quantity}
+                options={QUANTITY_TYPES}
+                onChange={(value) =>
+                  handleInputChange("quantity", Number(value))
+                }
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Color</InputLabel>
-                <Select
-                  value={formData.color ?? ""}
-                  label="Color"
-                  onChange={(e) =>
-                    handleInputChange("color", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(COLOR_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Color"
+                value={formData.color}
+                options={COLOR_TYPES}
+                onChange={(value) => handleInputChange("color", Number(value))}
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Health</InputLabel>
-                <Select
-                  value={formData.health ?? ""}
-                  label="Health"
-                  onChange={(e) =>
-                    handleInputChange("health", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(HEALTH_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Health"
+                value={formData.health}
+                options={HEALTH_TYPES}
+                onChange={(value) => handleInputChange("health", Number(value))}
+                fullWidth
+              />
             </Grid>
 
             {/* Additional Details */}
@@ -450,113 +370,70 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Blood</InputLabel>
-                <Select
-                  value={formData.blood ?? ""}
-                  label="Blood"
-                  onChange={(e) =>
-                    handleInputChange("blood", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(BLOOD_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Blood"
+                value={formData.blood}
+                options={BLOOD_TYPES}
+                onChange={(value) => handleInputChange("blood", Number(value))}
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Mucus</InputLabel>
-                <Select
-                  value={formData.mucus ?? ""}
-                  label="Mucus"
-                  onChange={(e) =>
-                    handleInputChange("mucus", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(MUCUS_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Mucus"
+                value={formData.mucus}
+                options={MUCUS_TYPES}
+                onChange={(value) => handleInputChange("mucus", Number(value))}
+                fullWidth
+              />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Floating</InputLabel>
-                <Select
-                  value={formData.floating ?? ""}
-                  label="Floating"
-                  onChange={(e) =>
-                    handleInputChange("floating", Number(e.target.value))
-                  }
-                  MenuProps={SCROLLABLE_MENU_PROPS}
-                >
-                  {Object.entries(FLOATING_TYPES).map(([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Floating"
+                value={formData.floating}
+                options={FLOATING_TYPES}
+                onChange={(value) =>
+                  handleInputChange("floating", Number(value))
+                }
+                fullWidth
+              />
             </Grid>
 
             {/* Medical Conditions */}
             <Grid item xs={12} sx={{ mt: 2 }}>
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMore />}>
-                  <Typography variant="h6">
-                    Medical Conditions (Optional)
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={2}>
-                    {CONDITIONS_FEATURES.map((condition) => (
-                      <Grid item xs={12} sm={6} key={condition}>
-                        <FormControl fullWidth size="small">
-                          <InputLabel>
-                            {condition
-                              .replace(/_/g, " ")
-                              .replace(/\b\w/g, (l) => l.toUpperCase())}
-                          </InputLabel>
-                          <Select
-                            value={
-                              formData[condition as keyof PoopRecord] ?? ""
-                            }
-                            label={condition
-                              .replace(/_/g, " ")
-                              .replace(/\b\w/g, (l) => l.toUpperCase())}
-                            onChange={(e) =>
-                              handleInputChange(
-                                condition as keyof PoopRecord,
-                                Number(e.target.value)
-                              )
-                            }
-                            MenuProps={SCROLLABLE_MENU_PROPS}
-                          >
-                            {Object.entries(CONDITIONS_TYPES).map(
-                              ([value, label]) => (
-                                <MenuItem key={value} value={value}>
-                                  {label}
-                                </MenuItem>
-                              )
-                            )}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    ))}
+              <Typography variant="h6" gutterBottom>
+                Medical Conditions
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Grid container spacing={3}>
+                {CONDITIONS_FEATURES.map((condition) => (
+                  <Grid item xs={12} key={condition}>
+                    <ToggleButtonField
+                      label={condition
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      value={
+                        formData[condition as keyof PoopRecord] as
+                          | number
+                          | undefined
+                      }
+                      options={CONDITIONS_TYPES}
+                      onChange={(value) =>
+                        handleInputChange(
+                          condition as keyof PoopRecord,
+                          Number(value)
+                        )
+                      }
+                      fullWidth
+                    />
                   </Grid>
-                </AccordionDetails>
-              </Accordion>
+                ))}
+              </Grid>
             </Grid>
           </Grid>
         </Box>
