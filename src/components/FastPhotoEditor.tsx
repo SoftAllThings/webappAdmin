@@ -403,13 +403,13 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
             </Grid>
 
             {/* Medical Conditions */}
-            <Grid item xs={12} sx={{ mt: 2 }}>
+            <Grid item xs={12} sx={{ mt: 2 }} display={"none"}>
               <Typography variant="h6" gutterBottom>
                 Medical Conditions
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} display={"none"}>
               <Grid container spacing={3}>
                 {CONDITIONS_FEATURES.map((condition) => (
                   <Grid item xs={12} key={condition}>
