@@ -311,18 +311,6 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
 
             <Grid item xs={12}>
               <ToggleButtonField
-                label="Consistency"
-                value={formData.consistency}
-                options={CONSISTENCY_TYPES}
-                onChange={(value) =>
-                  handleInputChange("consistency", Number(value))
-                }
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <ToggleButtonField
                 label="Shape"
                 value={formData.shape}
                 options={SHAPE_TYPES}
@@ -349,16 +337,6 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                 value={formData.color}
                 options={COLOR_TYPES}
                 onChange={(value) => handleInputChange("color", Number(value))}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <ToggleButtonField
-                label="Health"
-                value={formData.health}
-                options={HEALTH_TYPES}
-                onChange={(value) => handleInputChange("health", Number(value))}
                 fullWidth
               />
             </Grid>
@@ -398,6 +376,28 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                 onChange={(value) =>
                   handleInputChange("floating", Number(value))
                 }
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Consistency"
+                value={formData.consistency}
+                options={CONSISTENCY_TYPES}
+                onChange={(value) =>
+                  handleInputChange("consistency", Number(value))
+                }
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <ToggleButtonField
+                label="Health"
+                value={formData.health}
+                options={HEALTH_TYPES}
+                onChange={(value) => handleInputChange("health", Number(value))}
                 fullWidth
               />
             </Grid>
