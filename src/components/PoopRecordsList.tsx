@@ -23,12 +23,12 @@ import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
 const SCROLLABLE_MENU_PROPS = {
   PaperProps: {
     style: {
-      maxHeight: 'min(400px, 60vh)',
+      maxHeight: "min(400px, 60vh)",
     },
     sx: {
-      overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch',
-      '& .MuiList-root': {
+      overflowY: "auto",
+      WebkitOverflowScrolling: "touch",
+      "& .MuiList-root": {
         paddingTop: 0,
         paddingBottom: 0,
       },
@@ -47,7 +47,7 @@ const PoopRecordsList: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { records, loading, loadingMore, error, hasMore, loadMore, refetch } =
-    useInfinitePoopRecords(20, bristolTypeFilter);
+    useInfinitePoopRecords(100, bristolTypeFilter);
 
   // Set up intersection observer for automatic loading
   const intersectionRef = useIntersectionObserver(
@@ -110,7 +110,16 @@ const PoopRecordsList: React.FC = () => {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, flexWrap: "wrap", gap: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
         <Typography
           variant={isMobile ? "h5" : "h4"}
           component="h1"
@@ -119,7 +128,11 @@ const PoopRecordsList: React.FC = () => {
           Records ({records.length})
         </Typography>
         {isMobile && records.length > 0 && (
-          <Typography variant="caption" color="text.secondary" sx={{ fontStyle: "italic" }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontStyle: "italic" }}
+          >
             Tap to edit
           </Typography>
         )}
@@ -150,7 +163,11 @@ const PoopRecordsList: React.FC = () => {
       </Box>
 
       {records.length === 0 ? (
-        <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ textAlign: "center", py: 4 }}
+        >
           No records found.
         </Typography>
       ) : (

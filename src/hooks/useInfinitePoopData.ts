@@ -13,7 +13,7 @@ interface UseInfinitePoopRecordsReturn {
 }
 
 export const useInfinitePoopRecords = (
-  limit: number = 20,
+  limit: number = 100,
   bristolType?: number
 ): UseInfinitePoopRecordsReturn => {
   const [records, setRecords] = useState<PoopRecord[]>([]);
