@@ -110,7 +110,14 @@ export const usePoopCrud = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await poopApiService.updatePoop(id, data);
+
+      // Add current date to first_check_date
+      const updatedData = {
+        ...data,
+        first_check_date: new Date().toISOString().split('T')[0]
+      };
+
+      const response = await poopApiService.updatePoop(id, updatedData);
       return response.data || null;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update record");
