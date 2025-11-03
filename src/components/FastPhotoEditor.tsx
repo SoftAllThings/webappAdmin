@@ -203,8 +203,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           <Typography variant="h6" fontWeight="bold">
             {currentIndex + 1} / {records.length}
           </Typography>
-          <Typography variant="body2" mx={1}>
-            {records[currentIndex]?.bristol_type}
+          <Typography variant="body2" mx={1} fontWeight={"bold"}>
+            Type {records[currentIndex]?.bristol_type}
           </Typography>
         </Box>
 
