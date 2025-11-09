@@ -50,7 +50,7 @@ export const useLastVerifiedBristolType = () => {
       setError(null);
 
       const type = await poopApiService.getLastTypeVerified();
-      setLastType(type);
+      setLastType(type.data.bristol_type);
     } catch (err) {
       setError(
         err instanceof Error
