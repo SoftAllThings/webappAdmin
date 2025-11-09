@@ -2,106 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { PoopRecord, CreatePoopRecord, UpdatePoopRecord } from "../types/poop";
 import { poopApiService } from "../services/poopApiService";
 
-// Hook for fetching all poop records with Bristol Type filtering
-export const usePoopRecords = (bristolType?: number) => {
-  const [records, setRecords] = useState<PoopRecord[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRecords = useCallback(async () => {
-    try {
-      console.log(
-        "🎣 usePoopRecords: Starting to fetch records with bristolType:",
-        bristolType
-      );
-      setLoading(true);
-      setError(null);
-
-      // Fetch maximum 100 records at once
-      const response = await poopApiService.getAllPoops(1, 100, bristolType);
-      console.log("📊 usePoopRecords: Received response", response);
-      setRecords(response.data || []);
-      setTotalRecords(response.meta.total);
-    } catch (err) {
-      console.error("❌ usePoopRecords: Error fetching records", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch records");
-      setRecords([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [bristolType]);
-
-  useEffect(() => {
-    fetchRecords();
-  }, [fetchRecords]);
-
-  return {
-    records,
-    totalRecords,
-    loading,
-    error,
-    refetch: fetchRecords,
-  };
-};
-
-// Hook for fetching a single poop record
-export const usePoopRecord = (id: string | null) => {
-  const [record, setRecord] = useState<PoopRecord | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRecord = useCallback(async () => {
-    if (!id) {
-      setRecord(null);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await poopApiService.getPoopById(id);
-      setRecord(response.data || null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch record");
-      setRecord(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchRecord();
-  }, [fetchRecord]);
-
-  return {
-    record,
-    loading,
-    error,
-    refetch: fetchRecord,
-  };
-};
-
 // Hook for CRUD operations
 export const usePoopCrud = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const createRecord = async (
-    data: CreatePoopRecord
-  ): Promise<PoopRecord | null> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await poopApiService.createPoop(data);
-      return response.data || null;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create record");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const updateRecord = async (
     id: string,
@@ -114,7 +18,7 @@ export const usePoopCrud = () => {
       // Add current date to first_check_date
       const updatedData = {
         ...data,
-        first_check_date: new Date().toISOString().split('T')[0]
+        first_check_date: new Date().toISOString().split("T")[0],
       };
 
       const response = await poopApiService.updatePoop(id, updatedData);
@@ -128,7 +32,6 @@ export const usePoopCrud = () => {
   };
 
   return {
-    createRecord,
     updateRecord,
     loading,
     error,
@@ -136,42 +39,37 @@ export const usePoopCrud = () => {
   };
 };
 
-// Hook for searching poop records
-export const usePoopSearch = () => {
-  const [records, setRecords] = useState<PoopRecord[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
+export const useLastVerifiedBristolType = () => {
+  const [lastType, setLastType] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchRecords = async (
-    criteria: Record<string, any> = {},
-    page: number = 1,
-    limit: number = 10
-  ) => {
+  const fetchLastType = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await poopApiService.searchPoops(criteria, page, limit);
-      setRecords(response.data || []);
-      setTotalRecords(response.meta.total);
+
+      const type = await poopApiService.getLastTypeVerified();
+      setLastType(type);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to search records");
-      setRecords([]);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch last verified type"
+      );
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchLastType();
+  }, [fetchLastType]);
 
   return {
-    records,
-    totalRecords,
+    lastType,
     loading,
     error,
-    searchRecords,
-    clearResults: () => {
-      setRecords([]);
-      setTotalRecords(0);
-      setError(null);
-    },
+    refetch: fetchLastType,
   };
 };

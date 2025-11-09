@@ -18,6 +18,7 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
 import FastPhotoEditor from "./FastPhotoEditor";
 import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
+import { useLastVerifiedBristolType } from "../hooks/usePoopData";
 
 // Scrollable menu props for all select dropdowns - optimized for mobile
 const SCROLLABLE_MENU_PROPS = {
@@ -48,6 +49,8 @@ const PoopRecordsList: React.FC = () => {
 
   const { records, loading, loadingMore, error, hasMore, loadMore, refetch } =
     useInfinitePoopRecords(100, bristolTypeFilter);
+
+  const { lastType } = useLastVerifiedBristolType();
 
   // Set up intersection observer for automatic loading
   const intersectionRef = useIntersectionObserver(
@@ -139,7 +142,7 @@ const PoopRecordsList: React.FC = () => {
       </Box>
 
       {/* Bristol Type Filter */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3 }} gap={2}>
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel id="bristol-type-filter-label">
             Filter by Bristol Type
@@ -160,6 +163,10 @@ const PoopRecordsList: React.FC = () => {
             ))}
           </Select>
         </FormControl>
+
+        <Typography>
+          Last Type: {lastType !== null ? lastType : "Loading..."}
+        </Typography>
       </Box>
 
       {records.length === 0 ? (

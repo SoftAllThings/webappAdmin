@@ -133,6 +133,10 @@ class PoopApiService {
     return this.fetchApi<PoopDetailResponse>(`/poop/${id}`);
   }
 
+  async getLastTypeVerified(): Promise<number> {
+    return this.fetchApi<number>(`/poop/lastTypeVerified`);
+  }
+
   // Create a new poop record
   async createPoop(data: CreatePoopRecord): Promise<PoopDetailResponse> {
     return this.fetchApi<PoopDetailResponse>("/poop", {
