@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PoopRecord, CreatePoopRecord, UpdatePoopRecord } from "../types/poop";
+import { PoopRecord, UpdatePoopRecord } from "../types/poop";
 import { poopApiService } from "../services/poopApiService";
 
 // Hook for CRUD operations
