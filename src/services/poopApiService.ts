@@ -139,6 +139,15 @@ class PoopApiService {
     );
   }
 
+  // Get Bristol type stats from readyToTrainView
+  async getBristolStats(): Promise<{
+    data: Array<{ bristol_type: number; num: number }>;
+  }> {
+    return this.fetchApi<{
+      data: Array<{ bristol_type: number; num: number }>;
+    }>(`/poop/bristolStats`);
+  }
+
   // Create a new poop record
   async createPoop(data: CreatePoopRecord): Promise<PoopDetailResponse> {
     return this.fetchApi<PoopDetailResponse>("/poop", {

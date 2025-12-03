@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -8,13 +8,21 @@ import {
   Button,
   useMediaQuery,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { LogoutOutlined } from "@mui/icons-material";
+import { LogoutOutlined, BarChart, Close } from "@mui/icons-material";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import LoginPage from "./components/LoginPage";
 import PoopRecordsList from "./components/PoopRecordsList";
+import { poopApiService } from "./services/poopApiService";
 
 const theme = createTheme({
   palette: {
@@ -85,9 +93,36 @@ const theme = createTheme({
   },
 });
 
+interface BristolStat {
+  bristol_type: number;
+  num: number;
+}
+
 const AuthenticatedApp: React.FC = () => {
   const { logout } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [statsOpen, setStatsOpen] = useState(false);
+  const [stats, setStats] = useState<BristolStat[]>([]);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [statsError, setStatsError] = useState<string | null>(null);
+
+  const handleOpenStats = async () => {
+    setStatsOpen(true);
+    setStatsLoading(true);
+    setStatsError(null);
+    try {
+      const response = await poopApiService.getBristolStats();
+      setStats(response.data);
+    } catch (err) {
+      setStatsError(err instanceof Error ? err.message : "Failed to fetch stats");
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  const handleCloseStats = () => {
+    setStatsOpen(false);
+  };
 
   return (
     <>
@@ -96,6 +131,14 @@ const AuthenticatedApp: React.FC = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
             {isMobile ? "PoopCheck" : "PoopCheck Admin"}
           </Typography>
+          <Button
+            color="inherit"
+            onClick={handleOpenStats}
+            startIcon={!isMobile && <BarChart />}
+            sx={{ mr: 1 }}
+          >
+            {isMobile ? <BarChart /> : "Stats"}
+          </Button>
           <Button
             color="inherit"
             onClick={logout}
@@ -108,6 +151,49 @@ const AuthenticatedApp: React.FC = () => {
           </Button>
         </Toolbar>
       </AppBar>
+
+      <Dialog open={statsOpen} onClose={handleCloseStats} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          Bristol Type Stats
+          <IconButton onClick={handleCloseStats} size="small">
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {statsLoading ? (
+            <Box display="flex" justifyContent="center" py={4}>
+              <CircularProgress />
+            </Box>
+          ) : statsError ? (
+            <Typography color="error">{statsError}</Typography>
+          ) : (
+            <>
+              <List>
+                {stats.map((stat) => (
+                  <ListItem key={stat.bristol_type} divider>
+                    <ListItemText
+                      primary={`Type ${stat.bristol_type}`}
+                      secondary={`Count: ${stat.num}`}
+                    />
+                  </ListItem>
+                ))}
+                {stats.length === 0 && (
+                  <Typography color="text.secondary" align="center">
+                    No data available
+                  </Typography>
+                )}
+              </List>
+              {stats.length > 0 && (
+                <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: "divider" }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    Total: {stats.reduce((sum, stat) => sum + stat.num, 0)}
+                  </Typography>
+                </Box>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Container maxWidth="lg" sx={{ py: { xs: 1.5, sm: 2, md: 4 }, px: { xs: 1, sm: 2 } }}>
         {!isMobile && (
