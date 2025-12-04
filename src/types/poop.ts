@@ -40,6 +40,7 @@ export interface PoopRecord {
   s3_url?: string | null; // not editable
   gpt_bristol_type?: string | null; // not editable
   image_good_for_ml?: boolean | null; // EDITABLE - important for ML training
+  skipped?: boolean; // EDITABLE - skip image for later review
 }
 
 // For creating new records (without ID and timestamps)
@@ -118,6 +119,7 @@ export interface UpdatePoopRecord {
   s3_key?: string | null;
   s3_url?: string | null;
   gpt_bristol_type?: string | null;
+  skipped?: boolean;
 }
 
 // API Response types

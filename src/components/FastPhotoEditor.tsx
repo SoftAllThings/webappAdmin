@@ -170,6 +170,20 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
     onClose();
   }, [hasChanges, saveInBackground, onUpdate, onClose]);
 
+  const handleSkip = useCallback(() => {
+    if (!currentRecordIdRef.current) return;
+
+    // Set skipped to true and save immediately
+    updateRecord(currentRecordIdRef.current, { skipped: true }).catch((err) => {
+      console.error("Skip save failed:", err);
+    });
+
+    // Move to next image
+    if (currentIndex < records.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  }, [currentIndex, records.length, updateRecord]);
+
   if (!open || !currentRecord) return null;
 
   return (
@@ -271,25 +285,42 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
             >
               ML Training
             </Typography>
-            <ToggleButtonField
-              label="Is this image good for ML training?"
-              value={
-                formData.image_good_for_ml === null
-                  ? ""
-                  : formData.image_good_for_ml
-                  ? "true"
-                  : "false"
-              }
-              options={ML_TRAINING_OPTIONS}
-              onChange={(value) => {
-                const strValue = value.toString();
-                let newValue: boolean | null = null;
-                if (strValue === "true") newValue = true;
-                else if (strValue === "false") newValue = false;
-                handleInputChange("image_good_for_ml", newValue);
-              }}
-              fullWidth
-            />
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+              <Box sx={{ flex: 1 }}>
+                <ToggleButtonField
+                  label="Is this image good for ML training?"
+                  value={
+                    formData.image_good_for_ml === null
+                      ? ""
+                      : formData.image_good_for_ml
+                      ? "true"
+                      : "false"
+                  }
+                  options={ML_TRAINING_OPTIONS}
+                  onChange={(value) => {
+                    const strValue = value.toString();
+                    let newValue: boolean | null = null;
+                    if (strValue === "true") newValue = true;
+                    else if (strValue === "false") newValue = false;
+                    handleInputChange("image_good_for_ml", newValue);
+                  }}
+                  fullWidth
+                />
+              </Box>
+              <Button
+                variant="contained"
+                onClick={handleSkip}
+                disabled={currentIndex === records.length - 1}
+                sx={{
+                  bgcolor: "error.main",
+                  "&:hover": { bgcolor: "error.dark" },
+                  minWidth: "120px",
+                  mt: 3,
+                }}
+              >
+                NOT NOW
+              </Button>
+            </Box>
           </Box>
 
           <Grid container spacing={3}>
