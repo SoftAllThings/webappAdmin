@@ -98,11 +98,19 @@ interface BristolStat {
   num: number;
 }
 
+interface SummaryStats {
+  totalPoops: number;
+  handledPoops: number;
+  readyForAI: number;
+  remainingToHandle: number;
+}
+
 const AuthenticatedApp: React.FC = () => {
   const { logout } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [statsOpen, setStatsOpen] = useState(false);
   const [stats, setStats] = useState<BristolStat[]>([]);
+  const [summaryStats, setSummaryStats] = useState<SummaryStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string | null>(null);
 
@@ -112,7 +120,8 @@ const AuthenticatedApp: React.FC = () => {
     setStatsError(null);
     try {
       const response = await poopApiService.getBristolStats();
-      setStats(response.data);
+      setStats(response.data.bristolStats);
+      setSummaryStats(response.data.summary);
     } catch (err) {
       setStatsError(err instanceof Error ? err.message : "Failed to fetch stats");
     } finally {
@@ -168,6 +177,31 @@ const AuthenticatedApp: React.FC = () => {
             <Typography color="error">{statsError}</Typography>
           ) : (
             <>
+              {summaryStats && (
+                <Box sx={{ mb: 3, p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                    Dataset Overview
+                  </Typography>
+                  <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
+                    <Typography variant="body2">
+                      Total poops: <strong>{summaryStats.totalPoops.toLocaleString()}</strong>
+                    </Typography>
+                    <Typography variant="body2">
+                      Handled: <strong>{summaryStats.handledPoops.toLocaleString()}</strong>
+                    </Typography>
+                    <Typography variant="body2">
+                      Ready for AI: <strong>{summaryStats.readyForAI.toLocaleString()}</strong>
+                    </Typography>
+                    <Typography variant="body2">
+                      Remaining: <strong>{summaryStats.remainingToHandle.toLocaleString()}</strong>
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+
+              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                By Bristol Type (Ready for AI)
+              </Typography>
               <List>
                 {stats.map((stat) => (
                   <ListItem key={stat.bristol_type} divider>
@@ -186,7 +220,7 @@ const AuthenticatedApp: React.FC = () => {
               {stats.length > 0 && (
                 <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: "divider" }}>
                   <Typography variant="subtitle1" fontWeight={600}>
-                    Total: {stats.reduce((sum, stat) => sum + stat.num, 0)}
+                    Total Ready for AI: {stats.reduce((sum, stat) => sum + stat.num, 0)}
                   </Typography>
                 </Box>
               )}

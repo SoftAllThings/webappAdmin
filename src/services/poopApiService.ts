@@ -139,12 +139,28 @@ class PoopApiService {
     );
   }
 
-  // Get Bristol type stats from readyToTrainView
+  // Get Bristol type stats from readyToTrainView with summary statistics
   async getBristolStats(): Promise<{
-    data: Array<{ bristol_type: number; num: number }>;
+    data: {
+      bristolStats: Array<{ bristol_type: number; num: number }>;
+      summary: {
+        totalPoops: number;
+        handledPoops: number;
+        readyForAI: number;
+        remainingToHandle: number;
+      };
+    };
   }> {
     return this.fetchApi<{
-      data: Array<{ bristol_type: number; num: number }>;
+      data: {
+        bristolStats: Array<{ bristol_type: number; num: number }>;
+        summary: {
+          totalPoops: number;
+          handledPoops: number;
+          readyForAI: number;
+          remainingToHandle: number;
+        };
+      };
     }>(`/poop/bristolStats`);
   }
 
