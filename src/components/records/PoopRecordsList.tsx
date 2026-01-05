@@ -13,12 +13,12 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { useInfinitePoopRecords } from "../hooks/useInfinitePoopData";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+import { useInfinitePoopRecords } from "../../hooks/useInfinitePoopData";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
-import FastPhotoEditor from "./FastPhotoEditor";
-import { PoopRecord, BRISTOL_TYPES } from "../types/poop";
-import { useLastVerifiedBristolType } from "../hooks/usePoopData";
+import FastPhotoEditor from "../editor/FastPhotoEditor";
+import { PoopRecord, BRISTOL_TYPES } from "../../types/poop";
+import { useLastVerifiedBristolType } from "../../hooks/usePoopData";
 
 // Scrollable menu props for all select dropdowns - optimized for mobile
 const SCROLLABLE_MENU_PROPS = {

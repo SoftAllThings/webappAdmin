@@ -20,8 +20,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { LogoutOutlined, BarChart, Close } from "@mui/icons-material";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import LoginPage from "./components/LoginPage";
-import PoopRecordsList from "./components/PoopRecordsList";
+import LoginPage from "./components/auth/LoginPage";
+import PoopRecordsList from "./components/records/PoopRecordsList";
 import { poopApiService } from "./services/poopApiService";
 
 const theme = createTheme({

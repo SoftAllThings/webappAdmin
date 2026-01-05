@@ -15,7 +15,7 @@ import {
   VisibilityOff,
   AdminPanelSettings,
 } from "@mui/icons-material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");

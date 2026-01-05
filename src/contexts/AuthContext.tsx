@@ -1,4 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { authService } from "../services/auth.service";
+import {
+  getAuthToken,
+  setAuthToken,
+  removeAuthToken,
+} from "../services/api.config";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -10,8 +16,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = "https://webappadminbe.onrender.com/api";
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -20,28 +24,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has a valid token on app start
     const checkAuth = async () => {
-      const storedToken = localStorage.getItem("authToken");
+      const storedToken = getAuthToken();
       if (storedToken) {
-        // Trust the stored token - we'll validate on first API call
         setToken(storedToken);
         setIsAuthenticated(true);
 
         // Optionally verify in background (don't block on it)
-        try {
-          const response = await fetch(`${API_BASE_URL}/auth/verify`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-
-          if (!response.ok) {
-            console.warn("Token verification failed, will retry on next API call");
-          }
-        } catch (error) {
-          console.warn("Auth verification check failed:", error);
-          // Don't remove token - let it fail on actual API calls if invalid
+        const isValid = await authService.verifyToken();
+        if (!isValid) {
+          console.warn(
+            "Token verification failed, will retry on next API call"
+          );
         }
       }
       setLoading(false);
@@ -54,36 +48,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     username: string,
     password: string
   ): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+    const response = await authService.login(username, password);
 
-      const data = await response.json();
-
-      if (data.success && data.data.token) {
-        const newToken = data.data.token;
-        setToken(newToken);
-        setIsAuthenticated(true);
-        localStorage.setItem("authToken", newToken);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      return false;
+    if (response.success && response.data?.token) {
+      const newToken = response.data.token;
+      setToken(newToken);
+      setIsAuthenticated(true);
+      setAuthToken(newToken);
+      return true;
     }
+
+    return false;
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setToken(null);
-    localStorage.removeItem("authToken");
+    removeAuthToken();
   };
 
   return (

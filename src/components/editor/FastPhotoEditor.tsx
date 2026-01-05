@@ -13,9 +13,9 @@ import {
   FLOATING_TYPES,
   CONDITIONS_TYPES,
   CONDITIONS_FEATURES,
-} from "../types/poop";
-import { usePoopCrud } from "../hooks/usePoopData";
-import ToggleButtonField from "./ToggleButtonField";
+} from "../../types/poop";
+import { usePoopCrud } from "../../hooks/usePoopData";
+import ToggleButtonField from "../common/ToggleButtonField";
 
 // ML Training options
 const ML_TRAINING_OPTIONS = {

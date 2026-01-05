@@ -12,18 +12,22 @@ import {
   useMediaQuery,
   Stack,
 } from "@mui/material";
+import { PoopRecord } from "../../types/poop";
 import {
-  PoopRecord,
-  BRISTOL_TYPES,
-  CONSISTENCY_TYPES,
-  SHAPE_TYPES,
-  COLOR_TYPES,
-  QUANTITY_TYPES,
-  HEALTH_TYPES,
-  MUCUS_TYPES,
-  BLOOD_TYPES,
-  FLOATING_TYPES,
-} from "../types/poop";
+  getBristolLabel,
+  getConsistencyLabel,
+  getShapeLabel,
+  getColorLabel,
+  getQuantityLabel,
+  getHealthLabel,
+  getMucusLabel,
+  getBloodLabel,
+  getFloatingLabel,
+  getHealthColor,
+  getSeverityColor,
+  formatDate,
+  formatTime,
+} from "../../utils/labelHelpers";
 
 interface PoopRecordCardProps {
   record: PoopRecord;
@@ -35,77 +39,6 @@ const PoopRecordCard: React.FC<PoopRecordCardProps> = ({ record, onClick }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   console.log("🃏 Card: Rendering record:", record);
-
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  const formatTime = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getBristolLabel = (type: number) => {
-    return BRISTOL_TYPES[type as keyof typeof BRISTOL_TYPES] || `Type ${type}`;
-  };
-
-  const getConsistencyLabel = (consistency: number) => {
-    return (
-      CONSISTENCY_TYPES[consistency as keyof typeof CONSISTENCY_TYPES] ||
-      `Level ${consistency}`
-    );
-  };
-
-  const getShapeLabel = (shape: number) => {
-    return SHAPE_TYPES[shape as keyof typeof SHAPE_TYPES] || `Shape ${shape}`;
-  };
-
-  const getColorLabel = (color: number) => {
-    return COLOR_TYPES[color as keyof typeof COLOR_TYPES] || `Color ${color}`;
-  };
-
-  const getQuantityLabel = (quantity: number) => {
-    return (
-      QUANTITY_TYPES[quantity as keyof typeof QUANTITY_TYPES] ||
-      `Quantity ${quantity}`
-    );
-  };
-
-  const getHealthLabel = (health: number) => {
-    return (
-      HEALTH_TYPES[health as keyof typeof HEALTH_TYPES] || `Health ${health}`
-    );
-  };
-
-  const getMucusLabel = (mucus: number) => {
-    return MUCUS_TYPES[mucus as keyof typeof MUCUS_TYPES] || `Mucus ${mucus}`;
-  };
-
-  const getBloodLabel = (blood: number) => {
-    return BLOOD_TYPES[blood as keyof typeof BLOOD_TYPES] || `Blood ${blood}`;
-  };
-
-  const getFloatingLabel = (floating: number) => {
-    return (
-      FLOATING_TYPES[floating as keyof typeof FLOATING_TYPES] ||
-      `Floating ${floating}`
-    );
-  };
-
-  const getHealthColor = (health: number) => {
-    return health === 0 ? "success" : "warning";
-  };
-
-  const getSeverityColor = (level: number, maxLevel: number = 3) => {
-    if (level === 0) return "success";
-    if (level === 1) return "warning";
-    if (level >= 2) return "error";
-    return "default";
-  };
 
   return (
     <Card
