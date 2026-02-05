@@ -1,0 +1,163 @@
+
+
+.mainCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Button */
+.showDataBtn {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+}
+
+.showDataBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
+}
+
+.showDataBtn:active {
+  transform: translateY(0);
+}
+
+/* Error / empty state */
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Chart container */
+.mainCard > div[style] {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* Table-like output */
+.dataOuputCard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-size: 0.9rem;
+  align-items: center;
+}
+
+.dataOuputCard:first-of-type {
+  background: #eef2ff;
+  font-weight: 700;
+  color: #3730a3;
+}
+
+.dataOuputCard:not(:first-of-type):hover {
+  background: #eef2ff;
+}
+
+.dataOutput {
+  color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mainCard {
+    padding: 16px;
+  }
+
+  .dataOuputCard {
+    font-size: 0.85rem;
+  }
+}
+
+
+/* Data selection container */
+.metricsSection {
+justify-content: center;  
+display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Group for single input/select */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+/* Date inputs container */
+.dateGroup {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Labels */
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Select + input shared style */
+.select,
+.input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  background: white;
+  color: #111827;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Focus states */
+.select:focus,
+.input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Hover */
+.select:hover,
+.input:hover {
+  border-color: #9ca3af;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .metricsSection {
+    padding: 12px;
+  }
+
+  .fieldGroup {
+    min-width: 100%;
+  }
+
+  .dateGroup {
+    gap: 12px;
+  }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Box, Typography } from "@mui/material";
+import AnalyticsSection from "../analytics/AnalyticsSection";
 
 const AnalyticsView: React.FC = () => {
   return (
@@ -16,9 +17,8 @@ const AnalyticsView: React.FC = () => {
         >
           Analytics Dashboard
         </Typography>
-        <Typography variant="h6" color="text.secondary">
-          Coming Soon
-        </Typography>
+
+        <AnalyticsSection></AnalyticsSection>
       </Box>
     </Container>
   );

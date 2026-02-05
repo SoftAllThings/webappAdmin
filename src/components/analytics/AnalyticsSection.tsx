@@ -1,0 +1,86 @@
+import React, { useState } from "react";
+import { fetchAnalytics } from "../../services/api.analytics";
+import type { Metric, AnalyticsResponse } from "../../services/api.analytics";
+import DataSelection from "./DataSelection";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+import styles from "./AnalyticsSection.module.css";
+
+const AnalyticsSection = () => {
+  const [metric, setMetric] = useState<Metric>("newUsers");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
+
+  const handleClick = () => {
+    const fetch = async () => {
+      const response = await fetchAnalytics(metric, fromDate, toDate);
+      setAnalytics(response);
+    };
+    fetch();
+  };
+
+  const handleMetricChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setMetric(e.target.value as typeof metric);
+  };
+
+  const handleFromDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFromDate(e.target.value);
+  };
+
+  const handleToDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setToDate(e.target.value);
+  };
+
+  return (
+    <div className={styles["mainCard"]}>
+      <DataSelection
+        handleMetricChange={handleMetricChange}
+        handleFromDate={handleFromDate}
+        handleToDate={handleToDate}
+      />
+
+      <button onClick={handleClick} className={styles["showDataBtn"]}>
+        Show Data
+      </button>
+      {!analytics && (
+        <div className={styles["errorMessage"]}>Data not loaded</div>
+      )}
+
+      {analytics && (
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer>
+            <LineChart data={analytics.data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" type="category" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      <div className={styles["dataOuputCard"]}>
+        <strong>Date</strong>
+        <strong>Daily</strong>
+      </div>
+      {analytics?.data.map((data) => {
+        return (
+          <div className={styles["dataOuputCard"]}>
+            <div className={styles["dataOutput"]}>{data.date}</div>
+            <div className={styles["dataOutput"]}>{data.value}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default AnalyticsSection;
