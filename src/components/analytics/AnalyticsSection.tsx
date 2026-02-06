@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { fetchAnalytics } from "../../services/api.analytics";
+import { fetchRandomUser } from "../../services/api.firebase";
 import type { Metric, AnalyticsResponse } from "../../services/api.analytics";
 import DataSelection from "./DataSelection";
 import {
@@ -27,6 +28,18 @@ const AnalyticsSection = () => {
     fetch();
   };
 
+  const handleRandomUser = () => {
+    const doFetch = async () => {
+      try {
+        const user = await fetchRandomUser();
+        console.log("Random Firebase User:", user);
+      } catch (error) {
+        console.error("Error fetching random user:", error);
+      }
+    };
+    doFetch();
+  };
+
   const handleMetricChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMetric(e.target.value as typeof metric);
   };
@@ -49,6 +62,10 @@ const AnalyticsSection = () => {
 
       <button onClick={handleClick} className={styles["showDataBtn"]}>
         Show Data
+      </button>
+
+      <button onClick={handleRandomUser} className={styles["showDataBtn"]}>
+        Fetch Random User
       </button>
       {!analytics && (
         <div className={styles["errorMessage"]}>Data not loaded</div>
