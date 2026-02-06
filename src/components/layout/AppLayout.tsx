@@ -33,7 +33,7 @@ const AppLayout: React.FC = () => {
         sx={{
           flexGrow: 1,
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-          ml: { md: `${DRAWER_WIDTH}px` },
+          //ml: { md: `${DRAWER_WIDTH}px` },
         }}
       >
         {currentTab === "ai-review" && <AIReviewView />}

@@ -1,3 +1,6 @@
+import axios from 'axios';
+
+
 export type Metric = 'newUsers' | 'dailyActiveUsers' | 'dailyPosts';
 
 export type AnalyticsPoint = {
@@ -10,6 +13,7 @@ export type AnalyticsResponse = {
   from: string;
   to: string;
   total: number;
+  average: number;
   data: AnalyticsPoint[]
 }
 
@@ -19,17 +23,23 @@ export async function fetchAnalytics(
   to: string
 ){
  
-    const response = await fetch(
-      `http://localhost:3001/api/analytics?metric=${metric}&from=${from}&to=${to}`
-    );
+    // const response = await fetch(
+    //   `http://localhost:3001/api/analytics?metric=${metric}&from=${from}&to=${to}`
+    // );
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch analytics')
-    }
+    // if (!response.ok) {
+    //   throw new Error('Failed to fetch analytics')
+    // }
 
-    const json = await response.json();
+    // const json = await response.json();
 
-    return json.data;
+
+    //provato a fare con axios, mi piace di piu.
+    const fetchedData = await axios.get(`http://localhost:3001/api/analytics?metric=${metric}&from=${from}&to=${to}`)
+    .then(response => response.data)
+    .catch(error => {throw new Error('Failed to fetch analytics: ' + error.message)});
+
+    return fetchedData.data;
   
 }
 

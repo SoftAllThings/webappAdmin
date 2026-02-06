@@ -19,13 +19,22 @@ const AnalyticsSection = () => {
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
+  const [metricText, setMetricText] = useState<string | undefined>("New Daily Users");
+  const [incorrectDateWarning, setIncorrectDateWarning] = useState<string>('')
+
 
   const handleClick = () => {
     const fetch = async () => {
       const response = await fetchAnalytics(metric, fromDate, toDate);
       setAnalytics(response);
     };
-    fetch();
+
+    
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+
+    if (to < from) {setIncorrectDateWarning('Incorrect dates!'); setAnalytics(null)}
+      else fetch();
   };
 
   const handleRandomUser = () => {
@@ -42,6 +51,7 @@ const AnalyticsSection = () => {
 
   const handleMetricChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMetric(e.target.value as typeof metric);
+    setMetricText(e.target.options[e.target.selectedIndex]?.text);
   };
 
   const handleFromDate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,8 +59,13 @@ const AnalyticsSection = () => {
   };
 
   const handleToDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setToDate(e.target.value);
-  };
+
+
+    setToDate(e.target.value)
+};
+
+  
+
 
   return (
     <div className={styles["mainCard"]}>
@@ -67,9 +82,16 @@ const AnalyticsSection = () => {
       <button onClick={handleRandomUser} className={styles["showDataBtn"]}>
         Fetch Random User
       </button>
-      {!analytics && (
-        <div className={styles["errorMessage"]}>Data not loaded</div>
+
+      {(!analytics && !incorrectDateWarning) && (
+        <strong className={styles['errorMessage']}>Data not loaded</strong>
       )}
+
+      {incorrectDateWarning ? (
+        <div className={styles['errorMessage']}>{incorrectDateWarning}</div>
+      ) : null}
+      {analytics?.metric && <strong>{metricText}</strong>}
+      {analytics?.average && <div className={styles["averageOutput"]}>Daily Average: {Math.round(analytics.average)}</div>}
 
       {analytics && (
         <div style={{ width: "100%", height: 300 }}>
