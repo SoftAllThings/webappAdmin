@@ -5,7 +5,6 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Button,
 } from "@mui/material";
 import styles from './AIReview.module.css'
 import PoopRecordsList from "../records/PoopRecordsList";
