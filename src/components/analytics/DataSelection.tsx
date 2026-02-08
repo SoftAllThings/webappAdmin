@@ -24,9 +24,8 @@ const DataSelection = ({
           className={styles["select"]}
           onChange={(e) => handleMetricChange(e)}
         >
-          <option value="newUsers">New Daily Users</option>
-          <option value="dailyActiveUsers">Daily Active Users</option>
-          <option value="dailyPosts">Daily Posts</option>
+          <option value="users">New Daily Users</option>
+          <option value="poops">Daily Posts</option>
         </select>
       </div>
 

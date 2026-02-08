@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { fetchAnalytics } from "../../services/api.analytics";
-import { fetchRandomUser } from "../../services/api.firebase";
 import type { Metric, AnalyticsResponse } from "../../services/api.analytics";
 import DataSelection from "./DataSelection";
 import {
@@ -15,53 +14,52 @@ import {
 import styles from "./AnalyticsSection.module.css";
 
 const AnalyticsSection = () => {
-  const [metric, setMetric] = useState<Metric>("newUsers");
-  const [fromDate, setFromDate] = useState<string>("");
-  const [toDate, setToDate] = useState<string>("");
+  const [metric, setMetric] = useState<Metric>('users');
+  const [from, setFrom] = useState<string>("");
+  const [to, setTo] = useState<string>("");
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [metricText, setMetricText] = useState<string | undefined>("New Daily Users");
   const [incorrectDateWarning, setIncorrectDateWarning] = useState<string>('')
 
 
   const handleClick = () => {
-    const fetch = async () => {
-      const response = await fetchAnalytics(metric, fromDate, toDate);
+
+    if (!metric || !from || !to) {
+  setIncorrectDateWarning("Please select metric and dates");
+  return;
+}   
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+
+     const fetch = async () => {
+      const response = await fetchAnalytics(metric, from, to);
       setAnalytics(response);
+
     };
+   
 
-    
-    const from = new Date(fromDate);
-    const to = new Date(toDate);
-
-    if (to < from) {setIncorrectDateWarning('Incorrect dates!'); setAnalytics(null)}
+    if (toDate < fromDate) {setIncorrectDateWarning('Incorrect dates!'); setAnalytics(null)}
       else fetch();
+
+
+      
   };
 
-  const handleRandomUser = () => {
-    const doFetch = async () => {
-      try {
-        const user = await fetchRandomUser();
-        console.log("Random Firebase User:", user);
-      } catch (error) {
-        console.error("Error fetching random user:", error);
-      }
-    };
-    doFetch();
-  };
 
   const handleMetricChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMetric(e.target.value as typeof metric);
+    setAnalytics(null)
     setMetricText(e.target.options[e.target.selectedIndex]?.text);
   };
 
   const handleFromDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFromDate(e.target.value);
+    setFrom(e.target.value);
   };
 
   const handleToDate = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
-    setToDate(e.target.value)
+    setTo(e.target.value)
 };
 
   
@@ -79,9 +77,6 @@ const AnalyticsSection = () => {
         Show Data
       </button>
 
-      <button onClick={handleRandomUser} className={styles["showDataBtn"]}>
-        Fetch Random User
-      </button>
 
       {(!analytics && !incorrectDateWarning) && (
         <strong className={styles['errorMessage']}>Data not loaded</strong>
@@ -90,7 +85,7 @@ const AnalyticsSection = () => {
       {incorrectDateWarning ? (
         <div className={styles['errorMessage']}>{incorrectDateWarning}</div>
       ) : null}
-      {analytics?.metric && <strong>{metricText}</strong>}
+      {analytics && <strong>{metricText}</strong>}
       {analytics?.average && <div className={styles["averageOutput"]}>Daily Average: {Math.round(analytics.average)}</div>}
 
       {analytics && (

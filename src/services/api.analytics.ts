@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-export type Metric = 'newUsers' | 'dailyActiveUsers' | 'dailyPosts';
+export type Metric = 'users' | 'poops';
 
 export type AnalyticsPoint = {
   date: string;
@@ -9,19 +9,16 @@ export type AnalyticsPoint = {
 }
 
 export type AnalyticsResponse = {
-  metric: Metric;
-  from: string;
-  to: string;
+  data: AnalyticsPoint[];
   total: number;
   average: number;
-  data: AnalyticsPoint[]
 }
 
 export async function fetchAnalytics(
   metric: Metric,
   from: string,
   to: string
-){
+): Promise<AnalyticsResponse>  {
  
     // const response = await fetch(
     //   `http://localhost:3001/api/analytics?metric=${metric}&from=${from}&to=${to}`
@@ -35,11 +32,14 @@ export async function fetchAnalytics(
 
 
     //provato a fare con axios, mi piace di piu.
-    const fetchedData = await axios.get(`http://localhost:3001/api/analytics?metric=${metric}&from=${from}&to=${to}`)
-    .then(response => response.data)
+    const fetchedData = await axios.get(`http://localhost:3001/api/firebase/data`, 
+      {params:{
+        metric, from, to
+    }})
+    .then(response => response.data.data)
     .catch(error => {throw new Error('Failed to fetch analytics: ' + error.message)});
 
-    return fetchedData.data;
+    return fetchedData;
   
 }
 

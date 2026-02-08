@@ -4,20 +4,39 @@ import AppSidebar from "./AppSidebar";
 import { useNavigation } from "../../contexts/NavigationContext";
 import AIReviewView from "../views/AIReviewView";
 import AnalyticsView from "../views/AnalyticsView";
+import {IconButton} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const DRAWER_WIDTH = 240;
 
 const AppLayout: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(true);
   const { currentTab } = useNavigation();
 
-  const handleDrawerToggle = () => {
+
+    const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+
+
+
+
+
+
   return (
+    <>
+    
+      {isMobile && (
+  <IconButton
+    onClick={handleDrawerToggle}
+    sx={{ position: "fixed", top: 12, left: 12, zIndex: 1300 }}
+  >
+    <MenuIcon />
+  </IconButton>
+)}
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
       <AppSidebar
@@ -40,6 +59,7 @@ const AppLayout: React.FC = () => {
         {currentTab === "analytics" && <AnalyticsView />}
       </Box>
     </Box>
+    </>
   );
 };
 
