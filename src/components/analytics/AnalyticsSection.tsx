@@ -12,8 +12,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import styles from "./AnalyticsSection.module.css";
+import { CircularProgress } from "@mui/material";
 
 const AnalyticsSection = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [metric, setMetric] = useState<Metric>('users');
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
@@ -28,13 +30,14 @@ const AnalyticsSection = () => {
   setIncorrectDateWarning("Please select metric and dates");
   return;
 }   
+    setIsLoading(true);
     const fromDate = new Date(from);
     const toDate = new Date(to);
 
      const fetch = async () => {
       const response = await fetchAnalytics(metric, from, to);
       setAnalytics(response);
-
+    setIsLoading(false)
     };
    
 
@@ -48,6 +51,7 @@ const AnalyticsSection = () => {
 
   const handleMetricChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMetric(e.target.value as typeof metric);
+    setIsLoading(false);
     setAnalytics(null)
     setMetricText(e.target.options[e.target.selectedIndex]?.text);
   };
@@ -62,7 +66,6 @@ const AnalyticsSection = () => {
     setTo(e.target.value)
 };
 
-  
 
 
   return (
@@ -78,16 +81,21 @@ const AnalyticsSection = () => {
       </button>
 
 
-      {(!analytics && !incorrectDateWarning) && (
-        <strong className={styles['errorMessage']}>Data not loaded</strong>
-      )}
+      {(!isLoading && analytics?.data.length === 0) && <strong className={styles['errorMessage']}>NO DATA FOUND!</strong>
+      }
+
+        {isLoading && <div className={styles['loadingSection']}><CircularProgress size={40}/></div> }
 
       {incorrectDateWarning ? (
         <div className={styles['errorMessage']}>{incorrectDateWarning}</div>
       ) : null}
       {analytics && <strong>{metricText}</strong>}
-      {analytics?.average && <div className={styles["averageOutput"]}>Daily Average: {Math.round(analytics.average)}</div>}
-
+      <div className={styles['metricRow']}>
+      {(analytics?.total) && <div className={styles["metricOutput"]}>Total: <strong>{analytics.total}</strong></div>}
+      {analytics?.average && <div className={styles["metricOutput"]}>Daily Average: <strong>{Math.round(analytics.average)}</strong></div>}
+      {analytics?.max && <div className={styles["metricOutput"]}>Max: <strong>{analytics.max}</strong></div>}
+      {analytics?.min && <div className={styles["metricOutput"]}>Min: <strong>{analytics.min}</strong></div>}
+      </div>
       {analytics && (
         <div style={{ width: "100%", height: 300 }}>
           <ResponsiveContainer>

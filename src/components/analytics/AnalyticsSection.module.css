@@ -1,5 +1,4 @@
 
-
 .mainCard {
   background: #ffffff;
   border-radius: 16px;
@@ -160,4 +159,29 @@ display: flex;
   .dateGroup {
     gap: 12px;
   }
+}
+  
+.loadingSection{
+  display: flex;
+justify-content: center;}
+
+.metricRow {
+  display: flex;
+  gap: 12px;
+}
+
+.metricOutput {
+  padding: 14px 16px;
+  background-color: #fff;
+  border-radius: 10px;
+
+  color: rgba(0, 0, 0, 0.85);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  min-width: 120px;
 }

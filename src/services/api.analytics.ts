@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "./api.config";
 
-export type Metric = "users" | "poops";
+export type Metric = "users" | "poops" | "aiChats" | "journal" | "feedComments";
 
 export type AnalyticsPoint = {
   date: string;
@@ -12,6 +12,8 @@ export type AnalyticsResponse = {
   data: AnalyticsPoint[];
   total: number;
   average: number;
+  max: number;
+  min: number;
 };
 
 export async function fetchAnalytics(
