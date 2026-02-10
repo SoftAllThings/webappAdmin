@@ -25,7 +25,8 @@ const DataSelection = ({
           onChange={(e) => handleMetricChange(e)}
         >
           <option value="users">New Daily Users</option>
-          <option value="poops">Daily Posts</option>
+          <option value="poops">Daily Pictures Analyzed</option>
+          <option value="feedPosts">Posts In Community</option>
           <option value="feedComments">Comments in Community</option>
           <option value ="aiChats">AI Chats {'('}Premium{')'}</option>
           <option value="journal">Journal Entries {'('}Premium{')'}</option>
