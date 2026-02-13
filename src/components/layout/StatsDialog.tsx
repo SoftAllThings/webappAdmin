@@ -1,15 +1,11 @@
 import React from 'react'
 
 import {
-  Drawer,
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
   ListItemText,
   Box,
   Typography,
-  Divider,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -18,10 +14,6 @@ import {
 } from "@mui/material";
 
 import {
-  Assessment as AIIcon,
-  Analytics as AnalyticsIcon,
-  BarChart,
-  LogoutOutlined,
   Close,
 } from "@mui/icons-material";
 
