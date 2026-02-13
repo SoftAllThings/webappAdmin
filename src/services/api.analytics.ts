@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "./api.config";
 
-export type Metric = "users" | "poops" | "aiChats" | "journal" | "feedComments" | "feedPosts";
+export type Metric = "users" | "poops" | "aiChats" | "journal" | "feedComments" | "feedPosts" | "likes";
 
 export type AnalyticsPoint = {
   date: string;

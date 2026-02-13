@@ -27,6 +27,7 @@ const DataSelection = ({
           <option value="users">New Daily Users</option>
           <option value="poops">Daily Pictures Analyzed</option>
           <option value="feedPosts">Posts In Community</option>
+          <option value="likes">Likes In Community</option>
           <option value="feedComments">Comments in Community</option>
           <option value ="aiChats">AI Chats {'('}Premium{')'}</option>
           <option value="journal">Journal Entries {'('}Premium{')'}</option>

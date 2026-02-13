@@ -26,13 +26,10 @@ import { useNavigation } from "../../contexts/NavigationContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { TabId, NavigationItem } from "../../types/navigation";
 import { poopApiService } from "../../services/poopApiService";
+import StatsDialog from "./StatsDialog";
 
-interface AppSidebarProps {
-  drawerWidth: number;
-  mobileOpen: boolean;
-  onDrawerToggle: () => void;
-  isMobile: boolean;
-}
+
+
 
 interface BristolStat {
   bristol_type: number;
@@ -46,47 +43,75 @@ interface SummaryStats {
   remainingToHandle: number;
 }
 
+
+interface AppSidebarProps {
+  drawerWidth: number;
+  mobileOpen: boolean;
+  onDrawerToggle: () => void;
+  isMobile: boolean;
+
+    statsOpen: boolean;
+  handleCloseStats: () => void;
+  statsLoading: boolean;
+  statsError: string | null;
+  summaryStats: SummaryStats | null;
+  stats: BristolStat[];
+  handleOpenStats: ()=> Promise<void>
+}
+
+
+
+
+
 const AppSidebar: React.FC<AppSidebarProps> = ({
   drawerWidth,
   mobileOpen,
   onDrawerToggle,
   isMobile,
-}) => {
+  //per le stats
+
+statsOpen,
+  handleCloseStats,
+  statsLoading,
+  statsError,
+  summaryStats,
+  stats,
+  handleOpenStats}) => {
   const { currentTab, setCurrentTab } = useNavigation();
   const { logout } = useAuth();
 
   // Stats dialog state
-  const [statsOpen, setStatsOpen] = useState(false);
-  const [stats, setStats] = useState<BristolStat[]>([]);
-  const [summaryStats, setSummaryStats] = useState<SummaryStats | null>(null);
-  const [statsLoading, setStatsLoading] = useState(false);
-  const [statsError, setStatsError] = useState<string | null>(null);
+  // const [statsOpen, setStatsOpen] = useState(false);
+  // const [stats, setStats] = useState<BristolStat[]>([]);
+  // const [summaryStats, setSummaryStats] = useState<SummaryStats | null>(null);
+  // const [statsLoading, setStatsLoading] = useState(false);
+  // const [statsError, setStatsError] = useState<string | null>(null);
 
   const navigationItems: NavigationItem[] = [
     { id: "ai-review" as TabId, label: "AI Review", icon: <AIIcon /> },
     { id: "analytics" as TabId, label: "Analytics", icon: <AnalyticsIcon /> },
   ];
 
-  const handleOpenStats = async () => {
-    setStatsOpen(true);
-    setStatsLoading(true);
-    setStatsError(null);
-    try {
-      const response = await poopApiService.getBristolStats();
-      setStats(response.data.bristolStats);
-      setSummaryStats(response.data.summary);
-    } catch (err) {
-      setStatsError(
-        err instanceof Error ? err.message : "Failed to fetch stats"
-      );
-    } finally {
-      setStatsLoading(false);
-    }
-  };
+  // const handleOpenStats = async () => {
+  //   setStatsOpen(true);
+  //   setStatsLoading(true);
+  //   setStatsError(null);
+  //   try {
+  //     const response = await poopApiService.getBristolStats();
+  //     setStats(response.data.bristolStats);
+  //     setSummaryStats(response.data.summary);
+  //   } catch (err) {
+  //     setStatsError(
+  //       err instanceof Error ? err.message : "Failed to fetch stats"
+  //     );
+  //   } finally {
+  //     setStatsLoading(false);
+  //   }
+  // };
 
-  const handleCloseStats = () => {
-    setStatsOpen(false);
-  };
+  // const handleCloseStats = () => {
+  //   setStatsOpen(false);
+  // };
 
   const handleNavItemClick = (tabId: TabId) => {
     setCurrentTab(tabId);
@@ -152,7 +177,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
       >
         {/* Mobile drawer */}
-        {isMobile && (
+        {isMobile && 
           <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -162,12 +187,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: drawerWidth,
+                height: "100vh",
+                overflowY: "auto",
               },
             }}
-          >
-            {drawerContent}
-          </Drawer>
-        )}
+          />
+
+        }
 
         {/* Desktop drawer */}
         {!isMobile && (
@@ -189,7 +215,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       </Box>
 
       {/* Stats Dialog */}
-      <Dialog
+      {/* <Dialog
         open={statsOpen}
         onClose={handleCloseStats}
         maxWidth="sm"
@@ -279,7 +305,15 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
             </>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      {/* <StatsDialog 
+      statsOpen = {statsOpen}
+  handleCloseStats = {handleCloseStats}
+  statsLoading = {statsLoading}
+  statsError = {statsError}
+  summaryStats = {summaryStats}
+  stats = {stats}
+      /> */}
     </>
   );
 };

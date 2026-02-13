@@ -8,15 +8,41 @@ import {
 } from "@mui/material";
 import styles from './AIReview.module.css'
 import PoopRecordsList from "../records/PoopRecordsList";
+import StatsDialog from "../layout/StatsDialog";
 
-const AIReviewView: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false)
+interface BristolStat {
+  bristol_type: number;
+  num: number;
+}
+
+interface SummaryStats {
+  totalPoops: number;
+  handledPoops: number;
+  readyForAI: number;
+  remainingToHandle: number;
+}
+
+type Props = {
+  statsOpen: boolean;
+  handleCloseStats: () => void;
+  statsLoading: boolean;
+  statsError: string | null;
+  summaryStats: SummaryStats | null;
+  stats: BristolStat[];
+  handleOpenStats: ()=> Promise<void>
+}
+
+
+const AIReviewView = ({
+  handleOpenStats}: Props) => {
+  const [isVisible, setIsVisible] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(()=>{
     return ()=> setIsVisible(false)
   },[])
+
 
 
 
@@ -27,6 +53,7 @@ const AIReviewView: React.FC = () => {
       maxWidth="lg"
       sx={{ py: { xs: 1.5, sm: 2, md: 4 }, px: { xs: 1, sm: 2 } }}
     >
+   
       {!isMobile && (
         <Box sx={{ mb: { xs: 2, md: 4 } }}>
           <Typography
@@ -47,9 +74,24 @@ const AIReviewView: React.FC = () => {
           >
             Manage and analyze records with images and health data
           </Typography>
+
         </Box>
       )}
 
+      {/* {showStats && 
+      <StatsDialog 
+        statsOpen = {statsOpen} 
+  handleCloseStats = {handleCloseStats}
+  statsLoading = {statsLoading}
+  statsError = {statsError}
+  summaryStats = {summaryStats}
+  stats = {stats}
+      />} */}
+      <div >
+          <button className = {styles['viewButton']}
+          style = {{ padding: '10px'}}
+      onClick = {handleOpenStats}>Show Stats</button>
+          </div>
       <PoopRecordsList />
     </Container>}
     </div>
