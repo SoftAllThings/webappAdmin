@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import styles from './AIReview.module.css'
 import PoopRecordsList from "../records/PoopRecordsList";
-import StatsDialog from "../layout/StatsDialog";
 
 interface BristolStat {
   bristol_type: number;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Drawer,
   List,
@@ -9,24 +9,16 @@ import {
   Box,
   Typography,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  CircularProgress,
 } from "@mui/material";
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
   BarChart,
   LogoutOutlined,
-  Close,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { TabId, NavigationItem } from "../../types/navigation";
-import { poopApiService } from "../../services/poopApiService";
-import StatsDialog from "./StatsDialog";
 
 
 
@@ -68,14 +60,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   mobileOpen,
   onDrawerToggle,
   isMobile,
-  //per le stats
 
-statsOpen,
-  handleCloseStats,
-  statsLoading,
-  statsError,
-  summaryStats,
-  stats,
   handleOpenStats}) => {
   const { currentTab, setCurrentTab } = useNavigation();
   const { logout } = useAuth();
@@ -191,7 +176,9 @@ statsOpen,
                 overflowY: "auto",
               },
             }}
-          />
+          >            {drawerContent}
+
+            </Drawer>
 
         }
 
