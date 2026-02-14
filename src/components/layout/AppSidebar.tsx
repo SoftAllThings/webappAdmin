@@ -172,7 +172,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: drawerWidth,
-                height: "100vh",
+                height: "80vh",
                 overflowY: "auto",
               },
             }}
