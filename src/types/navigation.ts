@@ -1,4 +1,4 @@
-export type TabId = "ai-review" | "analytics";
+export type TabId = "ai-review" | "analytics" | "blog";
 
 export interface NavigationItem {
   id: TabId;

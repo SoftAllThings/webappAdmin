@@ -13,6 +13,7 @@ import {
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
+  Article as BlogIcon,
   BarChart,
   LogoutOutlined,
 } from "@mui/icons-material";
@@ -75,6 +76,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   const navigationItems: NavigationItem[] = [
     { id: "ai-review" as TabId, label: "AI Review", icon: <AIIcon /> },
     { id: "analytics" as TabId, label: "Analytics", icon: <AnalyticsIcon /> },
+    { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
 
   // const handleOpenStats = async () => {
