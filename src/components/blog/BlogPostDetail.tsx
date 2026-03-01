@@ -7,15 +7,14 @@ import {
   CircularProgress,
   Alert,
   Paper,
-  Divider,
   IconButton,
   Tooltip,
 } from "@mui/material";
+import { ArrowBack, ContentCopy } from "@mui/icons-material";
 import {
-  ArrowBack,
-  ContentCopy,
-} from "@mui/icons-material";
-import { blogApiService, BlogPostDetail as BlogPostDetailType } from "../../services/blogApiService";
+  blogApiService,
+  BlogPostDetail as BlogPostDetailType,
+} from "../../services/blogApiService";
 
 interface BlogPostDetailProps {
   postId: string;
@@ -69,11 +68,14 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
   }
 
   const heroImage = post.images.find((img) => img.image_type === "hero");
-  const formattedDate = new Date(post.published_at).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = new Date(post.published_at).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
+  );
 
   return (
     <Box>
@@ -81,7 +83,13 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
         Back to Posts
       </Button>
 
-      <Box sx={{ display: "flex", gap: 3, flexDirection: { xs: "column", lg: "row" } }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          flexDirection: { xs: "column", lg: "row" },
+        }}
+      >
         {/* Main Content */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           {heroImage && (
@@ -89,7 +97,13 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
               component="img"
               src={heroImage.s3_url}
               alt={heroImage.alt_text || post.title}
-              sx={{ width: "100%", maxHeight: 400, objectFit: "cover", borderRadius: 2, mb: 2 }}
+              sx={{
+                width: "100%",
+                maxHeight: 400,
+                objectFit: "cover",
+                borderRadius: 2,
+                mb: 2,
+              }}
             />
           )}
 
@@ -97,7 +111,15 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
             {post.title}
           </Typography>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 2,
+              flexWrap: "wrap",
+            }}
+          >
             <Typography variant="body2" color="text.secondary">
               {formattedDate}
             </Typography>
@@ -105,7 +127,12 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
               <Chip label={post.category.name} size="small" color="primary" />
             )}
             {post.tags.map((tag) => (
-              <Chip key={tag.id} label={tag.name} size="small" variant="outlined" />
+              <Chip
+                key={tag.id}
+                label={tag.name}
+                size="small"
+                variant="outlined"
+              />
             ))}
           </Box>
 
@@ -129,7 +156,11 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
                 },
                 "& figure": { my: 3, textAlign: "center" },
                 "& figure img": { maxWidth: "100%", borderRadius: 1 },
-                "& figcaption": { mt: 1, color: "text.secondary", fontSize: "0.875rem" },
+                "& figcaption": {
+                  mt: 1,
+                  color: "text.secondary",
+                  fontSize: "0.875rem",
+                },
                 "& aside.key-takeaways": {
                   bgcolor: "action.hover",
                   p: 2,
@@ -149,19 +180,31 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
               SEO Metadata
             </Typography>
-            <Typography variant="caption" color="text.secondary" display="block">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+            >
               Meta Title
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
               {post.meta_title}
             </Typography>
-            <Typography variant="caption" color="text.secondary" display="block">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+            >
               Meta Description
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
               {post.meta_description}
             </Typography>
-            <Typography variant="caption" color="text.secondary" display="block">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+            >
               Keywords
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}>
@@ -179,40 +222,76 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
               </Typography>
               {post.twitter_snippet && (
                 <Box sx={{ mb: 2 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography variant="caption" color="text.secondary">
                       Twitter / X
                     </Typography>
-                    <Tooltip title={copiedField === "twitter" ? "Copied!" : "Copy"}>
+                    <Tooltip
+                      title={copiedField === "twitter" ? "Copied!" : "Copy"}
+                    >
                       <IconButton
                         size="small"
-                        onClick={() => copyToClipboard(post.twitter_snippet!, "twitter")}
+                        onClick={() =>
+                          copyToClipboard(post.twitter_snippet!, "twitter")
+                        }
                       >
                         <ContentCopy fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </Box>
-                  <Typography variant="body2" sx={{ bgcolor: "action.hover", p: 1, borderRadius: 1, fontSize: "0.8rem" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      bgcolor: "action.hover",
+                      p: 1,
+                      borderRadius: 1,
+                      fontSize: "0.8rem",
+                    }}
+                  >
                     {post.twitter_snippet}
                   </Typography>
                 </Box>
               )}
               {post.linkedin_snippet && (
                 <Box>
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography variant="caption" color="text.secondary">
                       LinkedIn
                     </Typography>
-                    <Tooltip title={copiedField === "linkedin" ? "Copied!" : "Copy"}>
+                    <Tooltip
+                      title={copiedField === "linkedin" ? "Copied!" : "Copy"}
+                    >
                       <IconButton
                         size="small"
-                        onClick={() => copyToClipboard(post.linkedin_snippet!, "linkedin")}
+                        onClick={() =>
+                          copyToClipboard(post.linkedin_snippet!, "linkedin")
+                        }
                       >
                         <ContentCopy fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </Box>
-                  <Typography variant="body2" sx={{ bgcolor: "action.hover", p: 1, borderRadius: 1, fontSize: "0.8rem" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      bgcolor: "action.hover",
+                      p: 1,
+                      borderRadius: 1,
+                      fontSize: "0.8rem",
+                    }}
+                  >
                     {post.linkedin_snippet}
                   </Typography>
                 </Box>
@@ -222,7 +301,13 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
 
           {/* HTML Copy */}
           <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <Typography variant="subtitle2" fontWeight={600}>
                 Raw HTML
               </Typography>
@@ -254,11 +339,19 @@ const BlogPostDetail: React.FC<BlogPostDetailProps> = ({ postId, onBack }) => {
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    sx={{ color: "primary.main", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+                    sx={{
+                      color: "primary.main",
+                      textDecoration: "none",
+                      "&:hover": { textDecoration: "underline" },
+                    }}
                   >
                     {source.title}
                   </Typography>
-                  <Typography variant="caption" display="block" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    display="block"
+                    color="text.secondary"
+                  >
                     {source.source}
                   </Typography>
                 </Box>
