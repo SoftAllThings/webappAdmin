@@ -11,6 +11,8 @@ export interface BlogPostSummary {
   published_at: string;
   meta_title: string | null;
   target_keywords: string[] | null;
+    already_logged: boolean;
+
 }
 
 export interface BlogImage {
@@ -80,6 +82,13 @@ class BlogApiService {
 
   async getPostById(id: string): Promise<BlogDetailResponse> {
     return apiClient.fetch<BlogDetailResponse>(`/blog/posts/${id}`);
+  }
+
+  async updatePostLoggedStatus(id: string, alreadyLogged: boolean): Promise<{ success: boolean; message: string }> {
+    return apiClient.fetch<{ success: boolean; message: string }>(`/blog/posts/${id}/logged`, {
+      method: 'PUT',
+      body: JSON.stringify({ already_logged: alreadyLogged }),
+    });
   }
 
   async getCategories(): Promise<{ success: boolean; data: BlogCategory[] }> {

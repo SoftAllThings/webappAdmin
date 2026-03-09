@@ -13,16 +13,18 @@ import { BlogPostSummary } from "../../services/blogApiService";
 interface BlogPostCardProps {
   post: BlogPostSummary;
   onClick: (id: string) => void;
+  markPosted: (id: string) => void;
 }
 
-const BlogPostCard: React.FC<BlogPostCardProps> = ({ post, onClick }) => {
+const BlogPostCard: React.FC<BlogPostCardProps> = ({ post, onClick, markPosted}) => {
+
   const formattedDate = new Date(post.published_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 
-  return (
+  return (<>
     <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <CardActionArea onClick={() => onClick(post.id)} sx={{ flexGrow: 1 }}>
         <CardMedia
@@ -60,9 +62,17 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post, onClick }) => {
               <Chip key={tag.id} label={tag.name} size="small" variant="outlined" />
             ))}
           </Box>
+          <Box>
+
+          </Box>
+          
         </CardContent>
+
       </CardActionArea>
+      <button onClick= {() => markPosted(post.id)}>{!post.already_logged? "Mark as Posted" : "Set as Unposted"}</button>
     </Card>
+   
+    </>
   );
 };
 

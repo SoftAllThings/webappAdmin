@@ -24,6 +24,9 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showNew, setShowNew] = useState <boolean>(true);
+
+
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -52,8 +55,32 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
     setPage(1);
   };
 
+  const handleClickNewPosts = () => {
+    setShowNew(true)
+  };
+
+  const handleClickLoggedPosts = () => {
+    setShowNew(false)
+  }
+
+  const markPosted = async (postId: string) => {
+    const post = posts.find(post => post.id === postId);
+    if (!post) return;
+
+    const newStatus = !post.already_logged;
+    try {
+      await blogApiService.updatePostLoggedStatus(postId, newStatus);
+      setPosts(prevPosts => prevPosts.map(p => 
+        p.id === postId ? { ...p, already_logged: newStatus } : p
+      ));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update post status");
+    }
+  }
+
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
+  
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
@@ -69,6 +96,12 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
         />
       </Box>
 
+   <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 3 }}>
+
+    <button onClick = {handleClickNewPosts}>To be Posted</button>
+    <button onClick = {handleClickLoggedPosts}>Already Logged</button>
+   </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -79,34 +112,54 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
         <Box display="flex" justifyContent="center" py={8}>
           <CircularProgress />
         </Box>
-      ) : posts.length === 0 ? (
-        <Box textAlign="center" py={8}>
-          <Typography color="text.secondary">
-            {search ? "No posts found matching your search." : "No blog posts yet. The agent will generate the first one on its next run."}
-          </Typography>
-        </Box>
       ) : (
         <>
-          <Grid container spacing={3}>
-            {posts.map((post) => (
-              <Grid item xs={12} sm={6} md={4} key={post.id}>
-                <BlogPostCard post={post} onClick={onSelectPost} />
+          {showNew ? (
+            <>
+              <Grid container spacing={3}>
+                {posts.map((post) => (
+                  (!post.already_logged && <Grid item xs={12} sm={6} md={4} key={post.id}>
+                    <BlogPostCard post={post} onClick={onSelectPost} markPosted={()=>markPosted(post.id)}/>
+                  </Grid>)
+                ))}
               </Grid>
-            ))}
-          </Grid>
 
-          {totalPages > 1 && (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={(_, value) => setPage(value)}
-                color="primary"
-              />
-            </Box>
+              {totalPages > 1 && (
+                <Box display="flex" justifyContent="center" mt={4}>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={(_, value) => setPage(value)}
+                    color="primary"
+                  />
+                </Box>
+              )}
+            </>
+          ) : (
+            <>
+              <Grid container spacing={3}>
+                {posts.map((post) => (
+                  (post.already_logged && <Grid item xs={12} sm={6} md={4} key={post.id}>
+                    <BlogPostCard post={post} onClick={onSelectPost} markPosted={()=>markPosted(post.id)} />
+                  </Grid>)
+                ))}
+              </Grid>
+
+              {totalPages > 1 && (
+                <Box display="flex" justifyContent="center" mt={4}>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={(_, value) => setPage(value)}
+                    color="primary"
+                  />
+                </Box>
+              )}
+            </>
           )}
         </>
       )}
+
     </Box>
   );
 };
