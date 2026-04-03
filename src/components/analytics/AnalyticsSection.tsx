@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchAnalytics } from "../../services/api.analytics";
+import { fetchAnalytics, fetchUniqueUsersCount } from "../../services/api.analytics";
 import type { Metric, AnalyticsResponse } from "../../services/api.analytics";
 import DataSelection from "./DataSelection";
 import {
@@ -21,8 +21,19 @@ const AnalyticsSection = () => {
   const [to, setTo] = useState<string>("");
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [metricText, setMetricText] = useState<string | undefined>("New Daily Users");
-  const [incorrectDateWarning, setIncorrectDateWarning] = useState<string>('')
+  const [incorrectDateWarning, setIncorrectDateWarning] = useState<string>('');
+  const [uniqueUsers, setUniqueUsers] = useState<number | null>(null);
+  const [uniqueUsersLoading, setUniqueUsersLoading] = useState(false);
 
+  const handleFetchUniqueUsers = async () => {
+    setUniqueUsersLoading(true);
+    try {
+      const count = await fetchUniqueUsersCount();
+      setUniqueUsers(count);
+    } finally {
+      setUniqueUsersLoading(false);
+    }
+  };
 
   const handleClick = () => {
 
@@ -70,6 +81,16 @@ const AnalyticsSection = () => {
 
   return (
     <div className={styles["mainCard"]}>
+      <div className={styles["metricRow"]} style={{ marginBottom: "1rem" }}>
+        <div className={styles["metricOutput"]}>
+          Total Unique Users (DB):&nbsp;
+          <strong>{uniqueUsers !== null ? uniqueUsers : "—"}</strong>
+        </div>
+        <button onClick={handleFetchUniqueUsers} className={styles["showDataBtn"]} disabled={uniqueUsersLoading}>
+          {uniqueUsersLoading ? <CircularProgress size={14} /> : "Fetch"}
+        </button>
+      </div>
+
       <DataSelection
         handleMetricChange={handleMetricChange}
         handleFromDate={handleFromDate}

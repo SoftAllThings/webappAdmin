@@ -84,6 +84,20 @@ class PoopApiService {
     });
   }
 
+  // Send a cropped image for AI analysis
+  async analyzeCrop(
+    id: string,
+    imageBase64: string
+  ): Promise<{ success: boolean; data: { analysis: string } }> {
+    return apiClient.fetch<{ success: boolean; data: { analysis: string } }>(
+      `/poop/${id}/analyze-crop`,
+      {
+        method: "POST",
+        body: JSON.stringify({ imageBase64 }),
+      }
+    );
+  }
+
   // Search poop records with criteria
   async searchPoops(
     criteria: Record<string, any> = {},
