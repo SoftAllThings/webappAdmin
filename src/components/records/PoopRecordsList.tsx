@@ -17,7 +17,13 @@ import { useInfinitePoopRecords } from "../../hooks/useInfinitePoopData";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
 import FastPhotoEditor from "../editor/FastPhotoEditor";
-import { PoopRecord, BRISTOL_TYPES } from "../../types/poop";
+import {
+  PoopRecord,
+  BRISTOL_TYPES,
+  CONSISTENCY_TYPES,
+  FLOATING_TYPES,
+  HEALTH_TYPES,
+} from "../../types/poop";
 import { useLastVerifiedBristolType } from "../../hooks/usePoopData";
 
 // Scrollable menu props for all select dropdowns - optimized for mobile
@@ -37,12 +43,24 @@ const SCROLLABLE_MENU_PROPS = {
   },
 };
 
+type AdditionalDetailsFilter =
+  | "all"
+  | "blood"
+  | "mucus"
+  | "floating"
+  | "consistency"
+  | "health";
+
 const PoopRecordsList: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [editorOpen, setEditorOpen] = useState(false);
   const [bristolTypeFilter, setBristolTypeFilter] = useState<
     number | undefined
   >(undefined);
+  const [additionalDetailsFilter, setAdditionalDetailsFilter] =
+    useState<AdditionalDetailsFilter>("all");
+  const [additionalDetailsValue, setAdditionalDetailsValue] =
+    useState<string>("all");
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -67,7 +85,7 @@ const PoopRecordsList: React.FC = () => {
   );
 
   const handleRecordClick = (record: PoopRecord) => {
-    const index = records.findIndex((r) => r.id === record.id);
+    const index = filteredRecords.findIndex((r) => r.id === record.id);
     if (index !== -1) {
       setSelectedIndex(index);
       setEditorOpen(true);
@@ -89,6 +107,62 @@ const PoopRecordsList: React.FC = () => {
     console.log("🔍 Setting bristolTypeFilter to:", newFilter);
     setBristolTypeFilter(newFilter);
   };
+
+  const handleAdditionalDetailsFilterChange = (
+    event: SelectChangeEvent<string>
+  ) => {
+    const value = event.target.value as AdditionalDetailsFilter;
+    setAdditionalDetailsFilter(value);
+    setAdditionalDetailsValue("all");
+  };
+
+  const handleAdditionalDetailsValueChange = (
+    event: SelectChangeEvent<string>
+  ) => {
+    setAdditionalDetailsValue(event.target.value);
+  };
+
+  const shouldShowAdditionalDetailsValue =
+    additionalDetailsFilter === "floating" ||
+    additionalDetailsFilter === "consistency" ||
+    additionalDetailsFilter === "health";
+
+  const filteredRecords = records.filter((record) => {
+    if (additionalDetailsFilter === "all") {
+      return true;
+    }
+
+    if (additionalDetailsFilter === "blood") {
+      return record.blood > 0;
+    }
+
+    if (additionalDetailsFilter === "mucus") {
+      return record.mucus > 0;
+    }
+
+    if (
+      (additionalDetailsFilter === "floating" ||
+        additionalDetailsFilter === "consistency" ||
+        additionalDetailsFilter === "health") &&
+      additionalDetailsValue === "all"
+    ) {
+      return true;
+    }
+
+    if (additionalDetailsFilter === "floating") {
+      return record.floating === Number(additionalDetailsValue);
+    }
+
+    if (additionalDetailsFilter === "consistency") {
+      return record.consistency === Number(additionalDetailsValue);
+    }
+
+    if (additionalDetailsFilter === "health") {
+      return record.health === Number(additionalDetailsValue);
+    }
+
+    return true;
+  });
 
   if (loading) {
     return (
@@ -128,7 +202,7 @@ const PoopRecordsList: React.FC = () => {
           component="h1"
           sx={{ fontWeight: 600 }}
         >
-          Records ({records.length})
+          Records ({filteredRecords.length})
         </Typography>
         {isMobile && records.length > 0 && (
           <Typography
@@ -142,7 +216,15 @@ const PoopRecordsList: React.FC = () => {
       </Box>
 
       {/* Bristol Type Filter */}
-      <Box sx={{ mb: 3 }} gap={2}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          alignItems: "center",
+        }}
+      >
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel id="bristol-type-filter-label">
             Filter by Bristol Type
@@ -164,12 +246,78 @@ const PoopRecordsList: React.FC = () => {
           </Select>
         </FormControl>
 
+        <FormControl sx={{ minWidth: 220 }}>
+          <InputLabel id="additional-details-filter-label">
+            Filter by Additional Details
+          </InputLabel>
+          <Select
+            labelId="additional-details-filter-label"
+            id="additional-details-filter"
+            value={additionalDetailsFilter}
+            label="Filter by Additional Details"
+            onChange={handleAdditionalDetailsFilterChange}
+            MenuProps={SCROLLABLE_MENU_PROPS}
+          >
+            <MenuItem value="all">All Additional Details</MenuItem>
+            <MenuItem value="blood">Blood</MenuItem>
+            <MenuItem value="mucus">Mucus</MenuItem>
+            <MenuItem value="floating">Floating</MenuItem>
+            <MenuItem value="consistency">Consistency</MenuItem>
+            <MenuItem value="health">Health</MenuItem>
+          </Select>
+        </FormControl>
+
+        {shouldShowAdditionalDetailsValue && (
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel id="additional-details-value-label">
+              {additionalDetailsFilter === "floating" && "Floating Value"}
+              {additionalDetailsFilter === "consistency" &&
+                "Consistency Value"}
+              {additionalDetailsFilter === "health" && "Health Value"}
+            </InputLabel>
+            <Select
+              labelId="additional-details-value-label"
+              id="additional-details-value"
+              value={additionalDetailsValue}
+              label={
+                additionalDetailsFilter === "floating"
+                  ? "Floating Value"
+                  : additionalDetailsFilter === "consistency"
+                    ? "Consistency Value"
+                    : "Health Value"
+              }
+              onChange={handleAdditionalDetailsValueChange}
+              MenuProps={SCROLLABLE_MENU_PROPS}
+            >
+              <MenuItem value="all">All</MenuItem>
+              {additionalDetailsFilter === "floating" &&
+                Object.entries(FLOATING_TYPES).map(([value, description]) => (
+                  <MenuItem key={value} value={value}>
+                    {description}
+                  </MenuItem>
+                ))}
+              {additionalDetailsFilter === "consistency" &&
+                Object.entries(CONSISTENCY_TYPES).map(([value, description]) => (
+                  <MenuItem key={value} value={value}>
+                    {description}
+                  </MenuItem>
+                ))}
+              {additionalDetailsFilter === "health" &&
+                Object.entries(HEALTH_TYPES).map(([value, description]) => (
+                  <MenuItem key={value} value={value}>
+                    {description}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        )}
+
         <Typography>
           Last Type: {lastType !== null ? lastType : "Loading..."}
         </Typography>
       </Box>
 
-      {records.length === 0 ? (
+      {filteredRecords.length === 0 ? (
         <Typography
           variant="body1"
           color="text.secondary"
@@ -180,7 +328,7 @@ const PoopRecordsList: React.FC = () => {
       ) : (
         <>
           <Grid container spacing={isMobile ? 1.5 : 3}>
-            {records.map((record) => (
+            {filteredRecords.map((record) => (
               <Grid item xs={12} sm={6} md={4} key={record.id}>
                 <PoopRecordCard
                   record={record}
@@ -194,7 +342,7 @@ const PoopRecordsList: React.FC = () => {
           {records.length > 0 && (
             <Box sx={{ mt: 4, mb: 2, textAlign: "center" }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Showing {records.length} records
+                Showing {filteredRecords.length} of {records.length} loaded
               </Typography>
 
               {hasMore && (
@@ -234,7 +382,7 @@ const PoopRecordsList: React.FC = () => {
 
       <FastPhotoEditor
         open={editorOpen}
-        records={records}
+        records={filteredRecords}
         initialIndex={selectedIndex}
         onClose={handleEditorClose}
         onUpdate={handleRecordUpdate}
