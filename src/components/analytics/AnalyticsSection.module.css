@@ -24,6 +24,11 @@
   box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
 }
 
+.showDataBtn:disabled {
+  cursor: wait;
+  opacity: 0.92;
+}
+
 .showDataBtn:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
@@ -184,4 +189,74 @@ justify-content: center;}
   gap: 6px;
 
   min-width: 120px;
+}
+
+.exportCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%);
+  border: 1px solid #f3e8c8;
+}
+
+.exportHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.exportSubtext {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.exportActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.buttonLoadingContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exportLoadingPanel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f8fbff;
+  border: 1px solid #dbeafe;
+}
+
+.exportLoadingText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.exportLoadingText strong {
+  color: #1d4ed8;
+  font-size: 0.95rem;
+}
+
+.exportLoadingText span {
+  color: #475569;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.successMessage {
+  color: #15803d;
+  font-size: 0.9rem;
+  font-weight: 500;
 }

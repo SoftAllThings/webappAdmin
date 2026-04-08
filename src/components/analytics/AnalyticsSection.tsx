@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { fetchAnalytics, fetchUniqueUsersCount } from "../../services/api.analytics";
+import {
+  fetchAnalytics,
+  fetchUniqueUsersCount,
+  fetchUsersWithEmailCount,
+} from "../../services/api.analytics";
 import type { Metric, AnalyticsResponse } from "../../services/api.analytics";
 import DataSelection from "./DataSelection";
+import { userExportApiService } from "../../services/userExportApiService";
 import {
   LineChart,
   Line,
@@ -24,6 +29,15 @@ const AnalyticsSection = () => {
   const [incorrectDateWarning, setIncorrectDateWarning] = useState<string>('');
   const [uniqueUsers, setUniqueUsers] = useState<number | null>(null);
   const [uniqueUsersLoading, setUniqueUsersLoading] = useState(false);
+  const [usersWithEmail, setUsersWithEmail] = useState<number | null>(null);
+  const [usersWithEmailLoading, setUsersWithEmailLoading] = useState(false);
+  const [exportPremium, setExportPremium] = useState<string>("all");
+  const [exportFrom, setExportFrom] = useState<string>("");
+  const [exportTo, setExportTo] = useState<string>("");
+  const [useCollectionGroup, setUseCollectionGroup] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [exportError, setExportError] = useState<string>("");
+  const [exportSuccess, setExportSuccess] = useState<string>("");
 
   const handleFetchUniqueUsers = async () => {
     setUniqueUsersLoading(true);
@@ -32,6 +46,16 @@ const AnalyticsSection = () => {
       setUniqueUsers(count);
     } finally {
       setUniqueUsersLoading(false);
+    }
+  };
+
+  const handleFetchUsersWithEmail = async () => {
+    setUsersWithEmailLoading(true);
+    try {
+      const count = await fetchUsersWithEmailCount();
+      setUsersWithEmail(count);
+    } finally {
+      setUsersWithEmailLoading(false);
     }
   };
 
@@ -77,17 +101,85 @@ const AnalyticsSection = () => {
     setTo(e.target.value)
 };
 
+  const handleExportUsers = async () => {
+    setExportError("");
+    setExportSuccess("");
+
+    if (exportFrom && exportTo && exportTo < exportFrom) {
+      setExportError("Export dates are invalid.");
+      return;
+    }
+
+    setExportLoading(true);
+
+    try {
+      const filters: {
+        premium?: boolean;
+        createdAtFrom?: string;
+        createdAtTo?: string;
+      } = {};
+
+      if (exportPremium !== "all") {
+        filters.premium = exportPremium === "true";
+      }
+
+      if (exportFrom) {
+        filters.createdAtFrom = exportFrom;
+      }
+
+      if (exportTo) {
+        filters.createdAtTo = exportTo;
+      }
+
+      const blob = await userExportApiService.exportUsersCsv({
+        useCollectionGroup,
+        filters,
+      });
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const dateSuffix = new Date().toISOString().slice(0, 10);
+
+      link.href = downloadUrl;
+      link.download = `users-export-${dateSuffix}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+
+      setExportSuccess("CSV downloaded successfully.");
+    } catch (error) {
+      console.error("Failed to export users CSV:", error);
+      setExportError(
+        error instanceof Error ? error.message : "Failed to export users CSV."
+      );
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
 
 
   return (
     <div className={styles["mainCard"]}>
       <div className={styles["metricRow"]} style={{ marginBottom: "1rem" }}>
         <div className={styles["metricOutput"]}>
-          Total Unique Users (DB):&nbsp;
+          Total User Docs (DB):&nbsp;
           <strong>{uniqueUsers !== null ? uniqueUsers : "—"}</strong>
         </div>
         <button onClick={handleFetchUniqueUsers} className={styles["showDataBtn"]} disabled={uniqueUsersLoading}>
           {uniqueUsersLoading ? <CircularProgress size={14} /> : "Fetch"}
+        </button>
+        <div className={styles["metricOutput"]}>
+          Users With Email:&nbsp;
+          <strong>{usersWithEmail !== null ? usersWithEmail : "—"}</strong>
+        </div>
+        <button
+          onClick={handleFetchUsersWithEmail}
+          className={styles["showDataBtn"]}
+          disabled={usersWithEmailLoading}
+        >
+          {usersWithEmailLoading ? <CircularProgress size={14} /> : "Fetch"}
         </button>
       </div>
 
@@ -142,6 +234,116 @@ const AnalyticsSection = () => {
           </div>
         );
       })}
+
+      <div className={styles["exportCard"]}>
+        <div className={styles["exportHeader"]}>
+          <strong>User Export</strong>
+          <span className={styles["exportSubtext"]}>
+            Download emails with optional filters and created date.
+          </span>
+        </div>
+
+        <div className={styles["metricsSection"]}>
+          <div className={styles["fieldGroup"]}>
+            <label htmlFor="export-premium" className={styles["label"]}>
+              Premium
+            </label>
+            <select
+              id="export-premium"
+              className={styles["select"]}
+              value={exportPremium}
+              onChange={(e) => setExportPremium(e.target.value)}
+            >
+              <option value="all">All users</option>
+              <option value="true">Premium true</option>
+              <option value="false">Premium false</option>
+            </select>
+          </div>
+
+          <div className={styles["dateGroup"]}>
+            <div className={styles["fieldGroup"]}>
+              <label htmlFor="export-from" className={styles["label"]}>
+                Created From
+              </label>
+              <input
+                id="export-from"
+                type="date"
+                className={styles["input"]}
+                value={exportFrom}
+                onChange={(e) => setExportFrom(e.target.value)}
+              />
+            </div>
+
+            <div className={styles["fieldGroup"]}>
+              <label htmlFor="export-to" className={styles["label"]}>
+                Created To
+              </label>
+              <input
+                id="export-to"
+                type="date"
+                className={styles["input"]}
+                value={exportTo}
+                onChange={(e) => setExportTo(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className={styles["fieldGroup"]}>
+            <label htmlFor="export-collection-group" className={styles["label"]}>
+              Users Source
+            </label>
+            <select
+              id="export-collection-group"
+              className={styles["select"]}
+              value={useCollectionGroup ? "group" : "collection"}
+              onChange={(e) =>
+                setUseCollectionGroup(e.target.value === "group")
+              }
+            >
+              <option value="collection">Top-level users collection</option>
+              <option value="group">Collection group users</option>
+            </select>
+          </div>
+        </div>
+
+        <div className={styles["exportActions"]}>
+          <button
+            onClick={handleExportUsers}
+            className={styles["showDataBtn"]}
+            disabled={exportLoading}
+          >
+            {exportLoading ? (
+              <span className={styles["buttonLoadingContent"]}>
+                <CircularProgress size={18} color="inherit" />
+                Preparing CSV...
+              </span>
+            ) : (
+              "Export CSV"
+            )}
+          </button>
+
+          {exportError ? (
+            <div className={styles["errorMessage"]}>{exportError}</div>
+          ) : null}
+
+          {exportSuccess ? (
+            <div className={styles["successMessage"]}>{exportSuccess}</div>
+          ) : null}
+        </div>
+
+        {exportLoading ? (
+          <div className={styles["exportLoadingPanel"]}>
+            <CircularProgress size={26} />
+            <div className={styles["exportLoadingText"]}>
+              <strong>Generating your export...</strong>
+              <span>
+                Large exports can take a while for 25k users. Please keep this
+                window open until the download starts.
+              </span>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };
