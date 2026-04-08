@@ -34,7 +34,6 @@ const AnalyticsSection = () => {
   const [exportPremium, setExportPremium] = useState<string>("all");
   const [exportFrom, setExportFrom] = useState<string>("");
   const [exportTo, setExportTo] = useState<string>("");
-  const [useCollectionGroup, setUseCollectionGroup] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportError, setExportError] = useState<string>("");
   const [exportSuccess, setExportSuccess] = useState<string>("");
@@ -131,10 +130,7 @@ const AnalyticsSection = () => {
         filters.createdAtTo = exportTo;
       }
 
-      const blob = await userExportApiService.exportUsersCsv({
-        useCollectionGroup,
-        filters,
-      });
+      const blob = await userExportApiService.exportUsersCsv({ filters });
 
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -288,22 +284,6 @@ const AnalyticsSection = () => {
             </div>
           </div>
 
-          <div className={styles["fieldGroup"]}>
-            <label htmlFor="export-collection-group" className={styles["label"]}>
-              Users Source
-            </label>
-            <select
-              id="export-collection-group"
-              className={styles["select"]}
-              value={useCollectionGroup ? "group" : "collection"}
-              onChange={(e) =>
-                setUseCollectionGroup(e.target.value === "group")
-              }
-            >
-              <option value="collection">Top-level users collection</option>
-              <option value="group">Collection group users</option>
-            </select>
-          </div>
         </div>
 
         <div className={styles["exportActions"]}>
