@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Box, Button, Grid, Typography, IconButton } from "@mui/material";
-import { Close, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { Box, Button, Grid, Typography, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Close, NavigateBefore, NavigateNext, CropFree } from "@mui/icons-material";
+import ImageCropTool from "./ImageCropTool";
 import {
   PoopRecord,
   CONSISTENCY_TYPES,
@@ -54,6 +55,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [formData, setFormData] = useState<Partial<PoopRecord>>({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const currentRecordIdRef = useRef<string | null>(null);
 
@@ -256,6 +258,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
         {formData.s3_url && (
           <Box
             sx={{
+              position: "relative",
               width: "100%",
               height: "300px",
               bgcolor: "black",
@@ -270,8 +273,47 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                 objectFit: "contain",
               }}
             />
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<CropFree />}
+              onClick={() => setCropOpen(true)}
+              sx={{
+                position: "absolute",
+                bottom: 8,
+                right: 8,
+                bgcolor: "rgba(0,0,0,0.65)",
+                "&:hover": { bgcolor: "rgba(0,0,0,0.85)" },
+                fontSize: "0.7rem",
+              }}
+            >
+              Crop & Analyze
+            </Button>
           </Box>
         )}
+
+        {/* Crop & Analyze Dialog */}
+        <Dialog
+          open={cropOpen}
+          onClose={() => setCropOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            Crop & Analyze
+            <IconButton size="small" onClick={() => setCropOpen(false)}>
+              <Close />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            {formData.s3_url && currentRecord && (
+              <ImageCropTool
+                imageUrl={formData.s3_url}
+                recordId={currentRecord.id}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Form */}
         <Box sx={{ p: 3, pb: 20 }}>

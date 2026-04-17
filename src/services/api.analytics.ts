@@ -16,6 +16,28 @@ export type AnalyticsResponse = {
   min: number;
 };
 
+export async function fetchUniqueUsersCount(): Promise<number> {
+  const response = await axios
+    .get(`${API_BASE_URL}/firebase/unique-users`)
+    .then((res) => res.data.count as number)
+    .catch((error) => {
+      throw new Error("Failed to fetch unique users count: " + error.message);
+    });
+  return response;
+}
+
+export async function fetchUsersWithEmailCount(): Promise<number> {
+  const response = await axios
+    .get(`${API_BASE_URL}/firebase/users-with-email`)
+    .then((res) => res.data.count as number)
+    .catch((error) => {
+      throw new Error(
+        "Failed to fetch users with email count: " + error.message
+      );
+    });
+  return response;
+}
+
 export async function fetchAnalytics(
   metric: Metric,
   from: string,
