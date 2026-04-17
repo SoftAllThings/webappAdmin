@@ -4,6 +4,8 @@ import AppSidebar from "./AppSidebar";
 import { useNavigation } from "../../contexts/NavigationContext";
 import AIReviewView from "../views/AIReviewView";
 import AnalyticsView from "../views/AnalyticsView";
+import V2AnalyticsView from "../views/V2AnalyticsView";
+import ProductAnalyticsView from "../views/ProductAnalyticsView";
 import BlogView from "../views/BlogView";
 import {IconButton} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -121,6 +123,8 @@ const AppLayout: React.FC = () => {
         stats = {stats}
         />}
         {currentTab === "analytics" && <AnalyticsView />}
+        {currentTab === "v2-analytics" && <V2AnalyticsView />}
+        {currentTab === "product-analytics" && <ProductAnalyticsView />}
         {currentTab === "blog" && <BlogView />}
       </Box>
     </Box>

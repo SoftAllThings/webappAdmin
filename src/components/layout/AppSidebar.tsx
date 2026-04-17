@@ -15,6 +15,8 @@ import {
   Analytics as AnalyticsIcon,
   Article as BlogIcon,
   BarChart,
+  Insights as InsightsIcon,
+  TrendingUp as TrendingUpIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
@@ -76,6 +78,16 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   const navigationItems: NavigationItem[] = [
     { id: "ai-review" as TabId, label: "AI Review", icon: <AIIcon /> },
     { id: "analytics" as TabId, label: "Analytics", icon: <AnalyticsIcon /> },
+    {
+      id: "v2-analytics" as TabId,
+      label: "V2 App Analytics",
+      icon: <InsightsIcon />,
+    },
+    {
+      id: "product-analytics" as TabId,
+      label: "Product Analytics",
+      icon: <TrendingUpIcon />,
+    },
     { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
 
