@@ -21,6 +21,24 @@ import { bqApi, FunnelStep, FunnelType } from "../../services/api.bq";
 
 type Props = { from: string; to: string };
 
+const FUNNEL_DESCRIPTIONS: Record<FunnelType, { title: string; body: string }> = {
+  signup: {
+    title: "Signup funnel",
+    body:
+      "Tracks users from finishing onboarding all the way to account creation. A steep drop between 'Signup started' and 'Signup completed' usually means auth friction (form errors, Apple/Google failures).",
+  },
+  scan: {
+    title: "Scan funnel",
+    body:
+      "Your core product flow: opening the camera → capturing a photo → answering lifestyle questions → getting an AI result. Drop-offs here typically surface UX friction in the scan path.",
+  },
+  paywall: {
+    title: "Paywall / purchase funnel",
+    body:
+      "Users seeing the paywall → picking a plan → initiating purchase → completing payment. Drop between 'Purchase initiated' and 'Purchase completed' is usually payment sheet abandonment or RevenueCat failures.",
+  },
+};
+
 const FunnelChart: React.FC<Props> = ({ from, to }) => {
   const [type, setType] = useState<FunnelType>("paywall");
   const [data, setData] = useState<FunnelStep[]>([]);
@@ -38,10 +56,32 @@ const FunnelChart: React.FC<Props> = ({ from, to }) => {
       .finally(() => setLoading(false));
   }, [type, from, to]);
 
+  const desc = FUNNEL_DESCRIPTIONS[type];
+  const topUsers = data[0]?.users ?? 0;
+  const bottomUsers = data[data.length - 1]?.users ?? 0;
+  const overallConv =
+    topUsers > 0 ? ((bottomUsers / topUsers) * 100).toFixed(1) : "0.0";
+
   return (
     <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, flexWrap: "wrap", gap: 2 }}>
-        <Typography variant="h6">Conversion funnel</Typography>
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="h6">Conversion funnels</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Drop-off between sequential steps of a user journey. Each bar counts
+          unique users. The % label shows how many dropped off between steps.
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
         <ToggleButtonGroup
           size="small"
           value={type}
@@ -52,7 +92,31 @@ const FunnelChart: React.FC<Props> = ({ from, to }) => {
           <ToggleButton value="scan">Scan</ToggleButton>
           <ToggleButton value="paywall">Paywall</ToggleButton>
         </ToggleButtonGroup>
+
+        {!loading && topUsers > 0 && (
+          <Typography variant="body2" color="text.secondary">
+            Top-to-bottom conversion:{" "}
+            <strong style={{ color: "rgba(0,0,0,0.87)" }}>{overallConv}%</strong>
+          </Typography>
+        )}
       </Box>
+
+      <Box
+        sx={{
+          p: 1.5,
+          mb: 2,
+          bgcolor: "grey.50",
+          border: 1,
+          borderColor: "grey.200",
+          borderRadius: 1,
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          <strong style={{ color: "rgba(0,0,0,0.87)" }}>{desc.title}:</strong>{" "}
+          {desc.body}
+        </Typography>
+      </Box>
+
       {error && <Typography color="error">{error}</Typography>}
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
@@ -77,12 +141,16 @@ const FunnelChart: React.FC<Props> = ({ from, to }) => {
                 <LabelList
                   dataKey="users"
                   position="right"
-                  formatter={(v: any) => (typeof v === "number" ? v.toLocaleString() : v)}
+                  formatter={(v: any) =>
+                    typeof v === "number" ? v.toLocaleString() : v
+                  }
                 />
                 <LabelList
                   dataKey="dropOffPct"
                   position="insideRight"
-                  formatter={(v: any) => (typeof v === "number" && v > 0 ? `-${v}%` : "")}
+                  formatter={(v: any) =>
+                    typeof v === "number" && v > 0 ? `-${v}%` : ""
+                  }
                   fill="#fff"
                 />
               </Bar>
