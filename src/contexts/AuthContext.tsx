@@ -33,9 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         // Optionally verify in background (don't block on it)
         const isValid = await authService.verifyToken();
         if (!isValid) {
-          console.warn(
-            "Token verification failed, will retry on next API call"
-          );
+          console.warn("Token verification failed, clearing stored session");
+          removeAuthToken();
+          setToken(null);
+          setIsAuthenticated(false);
         }
       }
       setLoading(false);

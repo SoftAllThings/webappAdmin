@@ -1,4 +1,4 @@
-import { API_BASE_URL, getAuthToken } from "./api.config";
+import { API_BASE_URL, getAuthToken, removeAuthToken } from "./api.config";
 
 export type UserExportFilters = {
   premium?: boolean;
@@ -25,6 +25,12 @@ class UserExportApiService {
     });
 
     if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        removeAuthToken();
+        window.location.reload();
+        throw new Error("Authentication required");
+      }
+
       let message = `Failed to export users CSV: ${response.status}`;
 
       try {

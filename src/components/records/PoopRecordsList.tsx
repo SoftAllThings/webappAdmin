@@ -20,6 +20,7 @@ import FastPhotoEditor from "../editor/FastPhotoEditor";
 import {
   PoopRecord,
   BRISTOL_TYPES,
+  COLOR_TYPES,
   CONSISTENCY_TYPES,
   FLOATING_TYPES,
   HEALTH_TYPES,
@@ -49,7 +50,8 @@ type AdditionalDetailsFilter =
   | "mucus"
   | "floating"
   | "consistency"
-  | "health";
+  | "health"
+  | "color";
 
 const PoopRecordsList: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -125,7 +127,8 @@ const PoopRecordsList: React.FC = () => {
   const shouldShowAdditionalDetailsValue =
     additionalDetailsFilter === "floating" ||
     additionalDetailsFilter === "consistency" ||
-    additionalDetailsFilter === "health";
+    additionalDetailsFilter === "health" ||
+    additionalDetailsFilter === "color";
 
   const filteredRecords = records.filter((record) => {
     if (additionalDetailsFilter === "all") {
@@ -143,7 +146,8 @@ const PoopRecordsList: React.FC = () => {
     if (
       (additionalDetailsFilter === "floating" ||
         additionalDetailsFilter === "consistency" ||
-        additionalDetailsFilter === "health") &&
+        additionalDetailsFilter === "health" ||
+        additionalDetailsFilter === "color") &&
       additionalDetailsValue === "all"
     ) {
       return true;
@@ -159,6 +163,10 @@ const PoopRecordsList: React.FC = () => {
 
     if (additionalDetailsFilter === "health") {
       return record.health === Number(additionalDetailsValue);
+    }
+
+    if (additionalDetailsFilter === "color") {
+      return record.color === Number(additionalDetailsValue);
     }
 
     return true;
@@ -261,6 +269,7 @@ const PoopRecordsList: React.FC = () => {
             <MenuItem value="all">All Additional Details</MenuItem>
             <MenuItem value="blood">Blood</MenuItem>
             <MenuItem value="mucus">Mucus</MenuItem>
+            <MenuItem value="color">Color</MenuItem>
             <MenuItem value="floating">Floating</MenuItem>
             <MenuItem value="consistency">Consistency</MenuItem>
             <MenuItem value="health">Health</MenuItem>
@@ -270,9 +279,9 @@ const PoopRecordsList: React.FC = () => {
         {shouldShowAdditionalDetailsValue && (
           <FormControl sx={{ minWidth: 200 }}>
             <InputLabel id="additional-details-value-label">
+              {additionalDetailsFilter === "color" && "Color"}
               {additionalDetailsFilter === "floating" && "Floating Value"}
-              {additionalDetailsFilter === "consistency" &&
-                "Consistency Value"}
+              {additionalDetailsFilter === "consistency" && "Consistency Value"}
               {additionalDetailsFilter === "health" && "Health Value"}
             </InputLabel>
             <Select
@@ -280,16 +289,24 @@ const PoopRecordsList: React.FC = () => {
               id="additional-details-value"
               value={additionalDetailsValue}
               label={
-                additionalDetailsFilter === "floating"
-                  ? "Floating Value"
-                  : additionalDetailsFilter === "consistency"
-                    ? "Consistency Value"
-                    : "Health Value"
+                additionalDetailsFilter === "color"
+                  ? "Color"
+                  : additionalDetailsFilter === "floating"
+                    ? "Floating Value"
+                    : additionalDetailsFilter === "consistency"
+                      ? "Consistency Value"
+                      : "Health Value"
               }
               onChange={handleAdditionalDetailsValueChange}
               MenuProps={SCROLLABLE_MENU_PROPS}
             >
               <MenuItem value="all">All</MenuItem>
+              {additionalDetailsFilter === "color" &&
+                Object.entries(COLOR_TYPES).map(([value, description]) => (
+                  <MenuItem key={value} value={value}>
+                    {description}
+                  </MenuItem>
+                ))}
               {additionalDetailsFilter === "floating" &&
                 Object.entries(FLOATING_TYPES).map(([value, description]) => (
                   <MenuItem key={value} value={value}>
