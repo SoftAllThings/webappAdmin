@@ -13,7 +13,7 @@ import {
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
-  Article as BlogIcon,
+
   BarChart,
   Insights as InsightsIcon,
   TrendingUp as TrendingUpIcon,
