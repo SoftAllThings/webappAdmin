@@ -6,12 +6,12 @@ const isLocalhost = Boolean(
 
 export function register() {
   if ("serviceWorker" in navigator) {
-    const publicUrl = new URL(process.env.PUBLIC_URL || "", window.location.href);
+    const publicUrl = new URL(process.env['PUBLIC_URL'] || "", window.location.href);
 
     if (publicUrl.origin !== window.location.origin) return;
 
     window.addEventListener("load", () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      const swUrl = `${process.env['PUBLIC_URL']}/service-worker.js`;
 
       if (isLocalhost) {
         // In localhost, check if a service worker still exists
