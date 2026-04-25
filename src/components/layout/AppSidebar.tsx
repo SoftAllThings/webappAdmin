@@ -88,7 +88,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       label: "Product Analytics",
       icon: <TrendingUpIcon />,
     },
-    { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
+    // { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
 
   // const handleOpenStats = async () => {
