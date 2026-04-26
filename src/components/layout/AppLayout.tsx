@@ -127,7 +127,7 @@ const AppLayout: React.FC = () => {
           sx={{
             flexGrow: 1,
             width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-            pb: { xs: "calc(72px + env(safe-area-inset-bottom, 0px))", md: 0 },
+            pb: { xs: "120px", md: 0 },
             overflowX: "hidden",
           }}
         >
@@ -158,11 +158,11 @@ const AppLayout: React.FC = () => {
             left: 0,
             right: 0,
             zIndex: 1200,
-            borderTop: "1px solid rgba(0,0,0,0.06)",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 0,
-            pb: "env(safe-area-inset-bottom, 0px)",
-            backdropFilter: "blur(20px)",
-            backgroundColor: "rgba(255,255,255,0.92)",
+            pb: "34px",
+            backdropFilter: "blur(24px)",
+            backgroundColor: "rgba(10, 14, 26, 0.85)",
           }}
           elevation={0}
         >
@@ -174,17 +174,18 @@ const AppLayout: React.FC = () => {
             }}
             showLabels
             sx={{
-              height: 72,
+              height: 64,
               backgroundColor: "transparent",
               "& .MuiBottomNavigationAction-root": {
                 minWidth: 0,
                 px: 0.5,
-                py: 1,
+                pt: 1.5,
+                pb: 0.5,
                 transition: "color 0.2s ease",
-                "& .MuiSvgIcon-root": { fontSize: "1.5rem" },
+                "& .MuiSvgIcon-root": { fontSize: "1.6rem" },
                 "& .MuiBottomNavigationAction-label": {
                   fontSize: "0.7rem",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   mt: 0.5,
                   "&.Mui-selected": { fontSize: "0.72rem", fontWeight: 700 },
                 },

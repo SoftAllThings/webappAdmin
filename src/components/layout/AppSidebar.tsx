@@ -123,7 +123,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Header */}
       <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{
+          fontWeight: 800,
+          background: "linear-gradient(135deg, #FCFF59 0%, #9BF0FF 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}>
           PoopCheck Admin
         </Typography>
       </Box>
@@ -204,8 +209,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: drawerWidth,
-                borderRight: 1,
-                borderColor: "divider",
+                borderRight: "1px solid rgba(255,255,255,0.06)",
+                backgroundColor: "#0f1629",
               },
             }}
             open

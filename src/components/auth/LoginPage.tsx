@@ -51,8 +51,20 @@ const LoginPage: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(145deg, #f0f4ff 0%, #fdf2f8 50%, #f8fafc 100%)",
+        background: "linear-gradient(160deg, #0a0e1a 0%, #0f1629 40%, #111d35 100%)",
         px: 2,
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: "radial-gradient(circle at 30% 40%, rgba(252,255,89,0.06) 0%, transparent 50%), radial-gradient(circle at 70% 60%, rgba(155,240,255,0.06) 0%, transparent 50%)",
+          pointerEvents: "none",
+        },
       }}
     >
       <Paper
@@ -62,8 +74,12 @@ const LoginPage: React.FC = () => {
           width: "100%",
           maxWidth: 420,
           borderRadius: 4,
-          border: "1px solid rgba(99, 102, 241, 0.1)",
-          boxShadow: "0 4px 24px rgba(99, 102, 241, 0.08), 0 1px 4px rgba(0,0,0,0.04)",
+          border: "1px solid rgba(155, 240, 255, 0.1)",
+          backgroundColor: "rgba(17, 24, 39, 0.8)",
+          backdropFilter: "blur(20px)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <Box sx={{ textAlign: "center", mb: 4 }}>
@@ -72,20 +88,27 @@ const LoginPage: React.FC = () => {
               width: 64,
               height: 64,
               borderRadius: 3,
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+              background: "linear-gradient(135deg, #FCFF59 0%, #9BF0FF 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               mx: "auto",
               mb: 2,
+              boxShadow: "0 4px 20px rgba(155, 240, 255, 0.25)",
             }}
           >
-            <AdminPanelSettings sx={{ fontSize: 32, color: "#fff" }} />
+            <AdminPanelSettings sx={{ fontSize: 32, color: "#0a0e1a" }} />
           </Box>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 800, mb: 0.5 }}>
+          <Typography variant="h4" component="h1" sx={{
+            fontWeight: 800,
+            mb: 0.5,
+            background: "linear-gradient(135deg, #FCFF59 0%, #9BF0FF 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}>
             PoopCheck
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.9rem" }}>
+          <Typography variant="body2" sx={{ fontSize: "0.9rem", color: "#64748b" }}>
             Admin Dashboard
           </Typography>
         </Box>

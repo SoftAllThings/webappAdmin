@@ -1,29 +1,28 @@
 
 .viewButton {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
+  background: linear-gradient(135deg, #FCFF59 0%, #9BF0FF 100%);
+  color: #0a0e1a;
   border: none;
   border-radius: 16px;
   padding: 18px 32px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.1rem;
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 20px rgba(155, 240, 255, 0.25);
   display: block;
   margin: 0 auto;
 }
 
 .viewButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 8px 30px rgba(155, 240, 255, 0.35);
 }
 
 .viewButton:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 2px 12px rgba(155, 240, 255, 0.2);
 }
 
 @media (max-width: 600px) {
