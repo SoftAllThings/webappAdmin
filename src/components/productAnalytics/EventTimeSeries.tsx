@@ -81,7 +81,7 @@ const EventTimeSeries: React.FC<Props> = ({ from, to }) => {
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2, flexWrap: "wrap" }}>
-        <FormControl size="small" sx={{ minWidth: 320 }}>
+        <FormControl size="small" sx={{ minWidth: { xs: "100%", sm: 320 } }}>
           <InputLabel id="event-picker-label">Event</InputLabel>
           <Select
             labelId="event-picker-label"

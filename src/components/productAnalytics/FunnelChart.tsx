@@ -6,6 +6,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   CircularProgress,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   BarChart,
@@ -40,6 +42,8 @@ const FUNNEL_DESCRIPTIONS: Record<FunnelType, { title: string; body: string }> =
 };
 
 const FunnelChart: React.FC<Props> = ({ from, to }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [type, setType] = useState<FunnelType>("paywall");
   const [data, setData] = useState<FunnelStep[]>([]);
   const [loading, setLoading] = useState(false);
@@ -125,10 +129,10 @@ const FunnelChart: React.FC<Props> = ({ from, to }) => {
       ) : (
         <Box sx={{ width: "100%", height: 60 + data.length * 70 }}>
           <ResponsiveContainer>
-            <BarChart data={data} layout="vertical" margin={{ left: 60, right: 80 }}>
+            <BarChart data={data} layout="vertical" margin={isMobile ? { left: 10, right: 30 } : { left: 60, right: 80 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
-              <YAxis dataKey="step" type="category" width={160} />
+              <YAxis dataKey="step" type="category" width={isMobile ? 90 : 160} />
               <Tooltip
                 formatter={(v: any, key: any) => {
                   const num = Number(v);

@@ -26,3 +26,11 @@
 .viewButton:active {
   transform: translateY(0);
 }
+
+@media (max-width: 600px) {
+  .viewButton {
+    width: 100%;
+    font-size: 1rem;
+    padding: 16px;
+  }
+}

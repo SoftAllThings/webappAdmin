@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  useMediaQuery,
+  useTheme,
+  BottomNavigation,
+  BottomNavigationAction,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+} from "@mui/material";
 import AppSidebar from "./AppSidebar";
 import { useNavigation } from "../../contexts/NavigationContext";
 import AIReviewView from "../views/AIReviewView";
@@ -7,12 +18,19 @@ import AnalyticsView from "../views/AnalyticsView";
 import V2AnalyticsView from "../views/V2AnalyticsView";
 import ProductAnalyticsView from "../views/ProductAnalyticsView";
 import BlogView from "../views/BlogView";
-import {IconButton} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import {
+  Assessment as AIIcon,
+  Analytics as AnalyticsIcon,
+  Insights as InsightsIcon,
+  TrendingUp as TrendingUpIcon,
+  MoreHoriz as MoreIcon,
+  BarChart,
+  LogoutOutlined,
+} from "@mui/icons-material";
 import { poopApiService } from "../../services/poopApiService";
 import StatsDialog from "./StatsDialog";
-
-
+import { useAuth } from "../../contexts/AuthContext";
+import { TabId } from "../../types/navigation";
 
 interface BristolStat {
   bristol_type: number;
@@ -31,17 +49,21 @@ const DRAWER_WIDTH = 240;
 const AppLayout: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen] = useState(true);
-  const { currentTab } = useNavigation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { currentTab, setCurrentTab } = useNavigation();
+  const { logout } = useAuth();
 
-  //per stats
+  // More menu state (mobile bottom nav)
+  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
+
+  // Stats state
   const [statsOpen, setStatsOpen] = useState(false);
-    const [stats, setStats] = useState<BristolStat[]>([]);
-      const [summaryStats, setSummaryStats] = useState<SummaryStats | null>(null);
-      const [statsLoading, setStatsLoading] = useState(false);
-      const [statsError, setStatsError] = useState<string | null>(null);
+  const [stats, setStats] = useState<BristolStat[]>([]);
+  const [summaryStats, setSummaryStats] = useState<SummaryStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
-    const handleDrawerToggle = () => {
+  const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
@@ -66,68 +88,141 @@ const AppLayout: React.FC = () => {
     setStatsOpen(false);
   };
 
+  const bottomNavValue = ["ai-review", "analytics", "v2-analytics", "product-analytics"].includes(currentTab)
+    ? currentTab
+    : "ai-review";
+
   return (
     <>
-    
-      {isMobile && (
-  <IconButton
-    onClick={handleDrawerToggle}
-    sx={{ position: "fixed", top: 12, left: 12, zIndex: 1300 }}
-  >
-    <MenuIcon />
-  </IconButton>
-)}
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <AppSidebar
-        drawerWidth={DRAWER_WIDTH}
-        mobileOpen={mobileOpen}
-        onDrawerToggle={handleDrawerToggle}
-        isMobile={isMobile}
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        {/* Desktop Sidebar */}
+        {!isMobile && (
+          <AppSidebar
+            drawerWidth={DRAWER_WIDTH}
+            mobileOpen={mobileOpen}
+            onDrawerToggle={handleDrawerToggle}
+            isMobile={isMobile}
+            handleOpenStats={handleOpenStats}
+            statsOpen={statsOpen}
+            handleCloseStats={handleCloseStats}
+            statsLoading={statsLoading}
+            statsError={statsError}
+            summaryStats={summaryStats}
+            stats={stats}
+          />
+        )}
 
-        //per le stats
-        handleOpenStats = {handleOpenStats}
-        statsOpen = {statsOpen}
-        handleCloseStats = {handleCloseStats}
-        statsLoading = {statsLoading}
-        statsError = {statsError}
-        summaryStats = {summaryStats}
-        stats = {stats}
-      />
+        <StatsDialog
+          statsOpen={statsOpen}
+          handleCloseStats={handleCloseStats}
+          statsLoading={statsLoading}
+          statsError={statsError}
+          summaryStats={summaryStats}
+          stats={stats}
+        />
 
-      <StatsDialog
-  statsOpen={statsOpen}
-  handleCloseStats={handleCloseStats}
-  statsLoading={statsLoading}
-  statsError={statsError}
-  summaryStats={summaryStats}
-  stats={stats}
-/>
-
-      {/* Main content area */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-          //ml: { md: `${DRAWER_WIDTH}px` },
-        }}
-      >
-        {currentTab === "ai-review" && <AIReviewView 
-           handleOpenStats = {handleOpenStats}
-        statsOpen = {statsOpen}
-        handleCloseStats = {handleCloseStats}
-        statsLoading = {statsLoading}
-        statsError = {statsError}
-        summaryStats = {summaryStats}
-        stats = {stats}
-        />}
-        {currentTab === "analytics" && <AnalyticsView />}
-        {currentTab === "v2-analytics" && <V2AnalyticsView />}
-        {currentTab === "product-analytics" && <ProductAnalyticsView />}
-        {currentTab === "blog" && <BlogView />}
+        {/* Main content area */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+            pb: { xs: "calc(56px + env(safe-area-inset-bottom, 0px))", md: 0 },
+          }}
+        >
+          {currentTab === "ai-review" && (
+            <AIReviewView
+              handleOpenStats={handleOpenStats}
+              statsOpen={statsOpen}
+              handleCloseStats={handleCloseStats}
+              statsLoading={statsLoading}
+              statsError={statsError}
+              summaryStats={summaryStats}
+              stats={stats}
+            />
+          )}
+          {currentTab === "analytics" && <AnalyticsView />}
+          {currentTab === "v2-analytics" && <V2AnalyticsView />}
+          {currentTab === "product-analytics" && <ProductAnalyticsView />}
+          {currentTab === "blog" && <BlogView />}
+        </Box>
       </Box>
-    </Box>
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <Paper
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1200,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            pb: "env(safe-area-inset-bottom, 0px)",
+          }}
+          elevation={8}
+        >
+          <BottomNavigation
+            value={bottomNavValue}
+            onChange={(_, newValue) => {
+              if (newValue === "more") return;
+              setCurrentTab(newValue as TabId);
+            }}
+            showLabels
+            sx={{
+              height: 56,
+              "& .MuiBottomNavigationAction-root": {
+                minWidth: 0,
+                px: 0.5,
+                "& .MuiBottomNavigationAction-label": {
+                  fontSize: "0.65rem",
+                  "&.Mui-selected": { fontSize: "0.7rem" },
+                },
+              },
+            }}
+          >
+            <BottomNavigationAction label="Review" value="ai-review" icon={<AIIcon />} />
+            <BottomNavigationAction label="Analytics" value="analytics" icon={<AnalyticsIcon />} />
+            <BottomNavigationAction label="V2" value="v2-analytics" icon={<InsightsIcon />} />
+            <BottomNavigationAction label="Product" value="product-analytics" icon={<TrendingUpIcon />} />
+            <BottomNavigationAction
+              label="More"
+              value="more"
+              icon={<MoreIcon />}
+              onClick={(e) => setMoreAnchor(e.currentTarget)}
+            />
+          </BottomNavigation>
+        </Paper>
+      )}
+
+      {/* More menu (mobile) */}
+      <Menu
+        anchorEl={moreAnchor}
+        open={Boolean(moreAnchor)}
+        onClose={() => setMoreAnchor(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <MenuItem
+          onClick={() => {
+            setMoreAnchor(null);
+            handleOpenStats();
+          }}
+        >
+          <ListItemIcon><BarChart fontSize="small" /></ListItemIcon>
+          <ListItemText>Stats</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMoreAnchor(null);
+            logout();
+          }}
+        >
+          <ListItemIcon><LogoutOutlined fontSize="small" /></ListItemIcon>
+          <ListItemText>Logout</ListItemText>
+        </MenuItem>
+      </Menu>
     </>
   );
 };

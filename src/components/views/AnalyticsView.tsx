@@ -8,12 +8,12 @@ const AnalyticsView: React.FC = () => {
       maxWidth="lg"
       sx={{ py: { xs: 1.5, sm: 2, md: 4 }, px: { xs: 1, sm: 2 } }}
     >
-      <Box sx={{ textAlign: "center", mt: 8 }}>
+      <Box sx={{ textAlign: "center", mt: { xs: 2, md: 8 } }}>
         <Typography
           variant="h2"
           component="h1"
           gutterBottom
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 600, fontSize: { xs: "1.5rem", md: "3.75rem" } }}
         >
           Analytics Dashboard
         </Typography>

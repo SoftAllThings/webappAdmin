@@ -37,8 +37,8 @@ const ProductAnalyticsView: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
-      <Box sx={{ textAlign: "center", mt: 6, mb: 3 }}>
-        <Typography variant="h2" component="h1" sx={{ fontWeight: 600 }} gutterBottom>
+      <Box sx={{ textAlign: "center", mt: { xs: 2, md: 6 }, mb: 3 }}>
+        <Typography variant="h2" component="h1" sx={{ fontWeight: 600, fontSize: { xs: "1.5rem", md: "3.75rem" } }} gutterBottom>
           Product Analytics
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720, mx: "auto" }}>

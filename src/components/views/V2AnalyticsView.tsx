@@ -39,6 +39,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useMediaQuery, useTheme } from "@mui/material";
 import {
   v2AnalyticsApi,
   AggregateRow,
@@ -120,6 +121,8 @@ const INDIVIDUAL_GROUP_OPTIONS: { value: string; label: string }[] = [
 ];
 
 const IndividualsPanel: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [filters, setFilters] = useState<IndividualsFilterParams>({
     page: 1,
     limit: 25,
@@ -377,14 +380,14 @@ const IndividualsPanel: React.FC = () => {
 
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} spacing={2} sx={{ mb: 2 }}>
             <Typography variant="h6">Group individuals by</Typography>
             <TextField
               select
               size="small"
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value)}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: { xs: "100%", sm: 200 } }}
             >
               {INDIVIDUAL_GROUP_OPTIONS.map((o) => (
                 <MenuItem key={o.value} value={o.value}>
@@ -425,8 +428,8 @@ const IndividualsPanel: React.FC = () => {
                         data={agg}
                         dataKey="count"
                         nameKey="bucket"
-                        outerRadius={100}
-                        label
+                        outerRadius={isMobile ? 70 : 100}
+                        label={!isMobile}
                       >
                         {agg.map((_, idx) => (
                           <Cell
@@ -491,7 +494,8 @@ const IndividualsPanel: React.FC = () => {
               <CircularProgress />
             </Box>
           ) : (
-            <TableContainer sx={{ maxHeight: 600 }}>
+            <Box sx={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <TableContainer sx={{ maxHeight: { xs: 400, md: 600 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -499,11 +503,11 @@ const IndividualsPanel: React.FC = () => {
                     <TableCell>Org</TableCell>
                     <TableCell>Sex</TableCell>
                     <TableCell>Age</TableCell>
-                    <TableCell>Diet</TableCell>
-                    <TableCell>Stress</TableCell>
-                    <TableCell>Activity</TableCell>
-                    <TableCell>Water</TableCell>
-                    <TableCell>Alcohol</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Diet</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Stress</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Activity</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Water</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Alcohol</TableCell>
                     <TableCell>Created</TableCell>
                   </TableRow>
                 </TableHead>
@@ -520,13 +524,13 @@ const IndividualsPanel: React.FC = () => {
                         <TableCell>{r.organization_id}</TableCell>
                         <TableCell>{(pd as any).sex ?? "—"}</TableCell>
                         <TableCell>{(pd as any).age ?? "—"}</TableCell>
-                        <TableCell>{(pd as any).diet ?? "—"}</TableCell>
-                        <TableCell>{(pd as any).stressLevel ?? "—"}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{(pd as any).diet ?? "—"}</TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{(pd as any).stressLevel ?? "—"}</TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                           {(pd as any).physicalActivityLevel ?? "—"}
                         </TableCell>
-                        <TableCell>{(pd as any).waterIntake ?? "—"}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{(pd as any).waterIntake ?? "—"}</TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                           {(pd as any).alcoholConsumption ?? "—"}
                         </TableCell>
                         <TableCell>
@@ -547,6 +551,7 @@ const IndividualsPanel: React.FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+            </Box>
           )}
         </CardContent>
       </Card>
@@ -591,6 +596,8 @@ const BRISTOL_VALUES = [
 ];
 
 const StoolLogsPanel: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [filters, setFilters] = useState<StoolLogsFilterParams>({
     page: 1,
     limit: 25,
@@ -1205,14 +1212,14 @@ const StoolLogsPanel: React.FC = () => {
       {/* Aggregate chart */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} spacing={2} sx={{ mb: 2 }}>
             <Typography variant="h6">Group stool logs by</Typography>
             <TextField
               select
               size="small"
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value)}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: { xs: "100%", sm: 200 } }}
             >
               {STOOL_GROUP_OPTIONS.map((o) => (
                 <MenuItem key={o.value} value={o.value}>
@@ -1270,8 +1277,8 @@ const StoolLogsPanel: React.FC = () => {
                         data={agg}
                         dataKey="count"
                         nameKey="bucket"
-                        outerRadius={110}
-                        label
+                        outerRadius={isMobile ? 70 : 110}
+                        label={!isMobile}
                       >
                         {agg.map((_, idx) => (
                           <Cell
@@ -1337,7 +1344,8 @@ const StoolLogsPanel: React.FC = () => {
               <CircularProgress />
             </Box>
           ) : (
-            <TableContainer sx={{ maxHeight: 600 }}>
+            <Box sx={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <TableContainer sx={{ maxHeight: { xs: 400, md: 600 } }}>
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -1347,18 +1355,18 @@ const StoolLogsPanel: React.FC = () => {
                     <TableCell>Health</TableCell>
                     <TableCell>Color</TableCell>
                     <TableCell>Consistency</TableCell>
-                    <TableCell>Shape</TableCell>
-                    <TableCell>Quantity</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Shape</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Quantity</TableCell>
                     <TableCell>Blood</TableCell>
                     <TableCell>Mucus</TableCell>
-                    <TableCell>Pain</TableCell>
-                    <TableCell>Smell</TableCell>
-                    <TableCell>Duration</TableCell>
-                    <TableCell>Water</TableCell>
-                    <TableCell>Diet</TableCell>
-                    <TableCell>Stress</TableCell>
-                    <TableCell>Sleep</TableCell>
-                    <TableCell>Food groups</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Pain</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Smell</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Duration</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Water</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Diet</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Stress</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Sleep</TableCell>
+                    <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>Food groups</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1372,18 +1380,18 @@ const StoolLogsPanel: React.FC = () => {
                       <TableCell>{r.health ?? "—"}</TableCell>
                       <TableCell>{r.color ?? "—"}</TableCell>
                       <TableCell>{r.consistency ?? "—"}</TableCell>
-                      <TableCell>{r.shape ?? "—"}</TableCell>
-                      <TableCell>{r.quantity ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.shape ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.quantity ?? "—"}</TableCell>
                       <TableCell>{r.blood ?? "—"}</TableCell>
                       <TableCell>{r.mucus ?? "—"}</TableCell>
-                      <TableCell>{r.pain_level ?? "—"}</TableCell>
-                      <TableCell>{r.smell_level ?? "—"}</TableCell>
-                      <TableCell>{r.duration_minutes ?? "—"}</TableCell>
-                      <TableCell>{r.water_glasses ?? "—"}</TableCell>
-                      <TableCell>{r.diet ?? "—"}</TableCell>
-                      <TableCell>{r.stress ?? "—"}</TableCell>
-                      <TableCell>{r.sleep ?? "—"}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.pain_level ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.smell_level ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.duration_minutes ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.water_glasses ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.diet ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.stress ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>{r.sleep ?? "—"}</TableCell>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                         {r.food_groups && r.food_groups.length > 0 ? (
                           <Stack direction="row" spacing={0.5} flexWrap="wrap">
                             {r.food_groups.slice(0, 3).map((fg, idx) => (
@@ -1418,6 +1426,7 @@ const StoolLogsPanel: React.FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+            </Box>
           )}
         </CardContent>
       </Card>

@@ -228,12 +228,13 @@ const PoopRecordsList: React.FC = () => {
         sx={{
           mb: 3,
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           flexWrap: "wrap",
           gap: 2,
-          alignItems: "center",
+          alignItems: { xs: "stretch", sm: "center" },
         }}
       >
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl sx={{ minWidth: { xs: "100%", sm: 200 } }}>
           <InputLabel id="bristol-type-filter-label">
             Filter by Bristol Type
           </InputLabel>
@@ -254,7 +255,7 @@ const PoopRecordsList: React.FC = () => {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 220 }}>
+        <FormControl sx={{ minWidth: { xs: "100%", sm: 220 } }}>
           <InputLabel id="additional-details-filter-label">
             Filter by Additional Details
           </InputLabel>
@@ -277,7 +278,7 @@ const PoopRecordsList: React.FC = () => {
         </FormControl>
 
         {shouldShowAdditionalDetailsValue && (
-          <FormControl sx={{ minWidth: 200 }}>
+          <FormControl sx={{ minWidth: { xs: "100%", sm: 200 } }}>
             <InputLabel id="additional-details-value-label">
               {additionalDetailsFilter === "color" && "Color"}
               {additionalDetailsFilter === "floating" && "Floating Value"}

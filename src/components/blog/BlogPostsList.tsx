@@ -83,7 +83,7 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
   
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" }, mb: 3, gap: 1 }}>
         <Typography variant="h5" fontWeight={600}>
           Blog Posts
         </Typography>
@@ -92,7 +92,7 @@ const BlogPostsList: React.FC<BlogPostsListProps> = ({ onSelectPost }) => {
           placeholder="Search posts..."
           value={search}
           onChange={handleSearchChange}
-          sx={{ width: 250 }}
+          sx={{ width: { xs: "100%", sm: 250 } }}
         />
       </Box>
 
