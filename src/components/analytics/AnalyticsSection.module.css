@@ -1,9 +1,10 @@
 
 .mainCard {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   max-width: 900px;
   margin: 0 auto;
   display: flex;
@@ -13,25 +14,26 @@
 
 /* Button */
 .showDataBtn {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-weight: 600;
+  border-radius: 14px;
+  padding: 12px 22px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
 }
 
 .showDataBtn:disabled {
   cursor: wait;
-  opacity: 0.92;
+  opacity: 0.7;
 }
 
 .showDataBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 .showDataBtn:active {
@@ -47,8 +49,8 @@
 
 /* Chart container */
 .mainCard > div[style] {
-  background: #f9fafb;
-  border-radius: 12px;
+  background: #f8fafc;
+  border-radius: 14px;
   padding: 12px;
 }
 
@@ -56,15 +58,16 @@
 .dataOuputCard {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: #f9fafb;
-  font-size: 0.9rem;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  font-size: 0.88rem;
   align-items: center;
+  transition: background 0.15s ease;
 }
 
 .dataOuputCard:first-of-type {
-  background: #eef2ff;
+  background: linear-gradient(135deg, #eef2ff 0%, #e8e0ff 100%);
   font-weight: 700;
   color: #3730a3;
 }
@@ -81,10 +84,12 @@
 @media (max-width: 600px) {
   .mainCard {
     padding: 16px;
+    border-radius: 16px;
   }
 
   .dataOuputCard {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+    padding: 10px 12px;
   }
 
   .metricOutput {
@@ -95,14 +100,14 @@
 
 /* Data selection container */
 .metricsSection {
-justify-content: center;  
-display: flex;
+  justify-content: center;
+  display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  background: #f9fafb;
+  gap: 16px;
+  background: #f8fafc;
   padding: 16px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* Group for single input/select */
@@ -122,23 +127,23 @@ display: flex;
 
 /* Labels */
 .label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 /* Select + input shared style */
 .select,
 .input {
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.88rem;
   background: white;
-  color: #111827;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  color: #0f172a;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Focus states */
@@ -146,19 +151,20 @@ display: flex;
 .input:focus {
   outline: none;
   border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
 /* Hover */
 .select:hover,
 .input:hover {
-  border-color: #9ca3af;
+  border-color: #6366f1;
 }
 
 /* Mobile tweaks */
 @media (max-width: 600px) {
   .metricsSection {
     padding: 12px;
+    gap: 12px;
   }
 
   .fieldGroup {
@@ -166,13 +172,14 @@ display: flex;
   }
 
   .dateGroup {
-    gap: 12px;
+    gap: 10px;
   }
 }
-  
-.loadingSection{
+
+.loadingSection {
   display: flex;
-justify-content: center;}
+  justify-content: center;
+}
 
 .metricRow {
   display: flex;
@@ -183,16 +190,13 @@ justify-content: center;}
 .metricOutput {
   padding: 14px 16px;
   background-color: #fff;
-  border-radius: 10px;
-
-  color: rgba(0, 0, 0, 0.85);
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-
+  border-radius: 14px;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 6px;
-
   min-width: 120px;
 }
 
@@ -201,7 +205,7 @@ justify-content: center;}
   flex-direction: column;
   gap: 16px;
   padding: 18px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%);
   border: 1px solid #f3e8c8;
 }
@@ -215,8 +219,8 @@ justify-content: center;}
 }
 
 .exportSubtext {
-  font-size: 0.9rem;
-  color: #6b7280;
+  font-size: 0.88rem;
+  color: #64748b;
 }
 
 .exportActions {
@@ -237,8 +241,8 @@ justify-content: center;}
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: #f8fbff;
+  border-radius: 14px;
+  background: #f0f4ff;
   border: 1px solid #dbeafe;
 }
 
@@ -250,7 +254,7 @@ justify-content: center;}
 }
 
 .exportLoadingText strong {
-  color: #1d4ed8;
+  color: #4f46e5;
   font-size: 0.95rem;
 }
 
@@ -263,5 +267,5 @@ justify-content: center;}
 .successMessage {
   color: #15803d;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
 }

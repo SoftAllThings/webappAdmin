@@ -127,7 +127,8 @@ const AppLayout: React.FC = () => {
           sx={{
             flexGrow: 1,
             width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-            pb: { xs: "calc(56px + env(safe-area-inset-bottom, 0px))", md: 0 },
+            pb: { xs: "calc(72px + env(safe-area-inset-bottom, 0px))", md: 0 },
+            overflowX: "hidden",
           }}
         >
           {currentTab === "ai-review" && (
@@ -157,11 +158,13 @@ const AppLayout: React.FC = () => {
             left: 0,
             right: 0,
             zIndex: 1200,
-            borderTop: "1px solid",
-            borderColor: "divider",
+            borderTop: "1px solid rgba(0,0,0,0.06)",
+            borderRadius: 0,
             pb: "env(safe-area-inset-bottom, 0px)",
+            backdropFilter: "blur(20px)",
+            backgroundColor: "rgba(255,255,255,0.92)",
           }}
-          elevation={8}
+          elevation={0}
         >
           <BottomNavigation
             value={bottomNavValue}
@@ -171,13 +174,19 @@ const AppLayout: React.FC = () => {
             }}
             showLabels
             sx={{
-              height: 56,
+              height: 72,
+              backgroundColor: "transparent",
               "& .MuiBottomNavigationAction-root": {
                 minWidth: 0,
                 px: 0.5,
+                py: 1,
+                transition: "color 0.2s ease",
+                "& .MuiSvgIcon-root": { fontSize: "1.5rem" },
                 "& .MuiBottomNavigationAction-label": {
-                  fontSize: "0.65rem",
-                  "&.Mui-selected": { fontSize: "0.7rem" },
+                  fontSize: "0.7rem",
+                  fontWeight: 500,
+                  mt: 0.5,
+                  "&.Mui-selected": { fontSize: "0.72rem", fontWeight: 700 },
                 },
               },
             }}

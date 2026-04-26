@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Container,
   Paper,
   TextField,
   Button,
@@ -46,97 +45,113 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(145deg, #f0f4ff 0%, #fdf2f8 50%, #f8fafc 100%)",
+        px: 2,
+      }}
+    >
+      <Paper
+        elevation={0}
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          p: { xs: 3, sm: 5 },
+          width: "100%",
+          maxWidth: 420,
+          borderRadius: 4,
+          border: "1px solid rgba(99, 102, 241, 0.1)",
+          boxShadow: "0 4px 24px rgba(99, 102, 241, 0.08), 0 1px 4px rgba(0,0,0,0.04)",
         }}
       >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            width: "100%",
-            maxWidth: 400,
-          }}
-        >
-          <Box sx={{ textAlign: "center", mb: 3 }}>
-            <AdminPanelSettings
-              sx={{ fontSize: 48, color: "primary.main", mb: 1 }}
-            />
-            <Typography variant="h4" component="h1" gutterBottom>
-              PoopCheck Admin
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Please sign in to continue
-            </Typography>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <Box
+            sx={{
+              width: 64,
+              height: 64,
+              borderRadius: 3,
+              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mx: "auto",
+              mb: 2,
+            }}
+          >
+            <AdminPanelSettings sx={{ fontSize: 32, color: "#fff" }} />
           </Box>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 800, mb: 0.5 }}>
+            PoopCheck
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.9rem" }}>
+            Admin Dashboard
+          </Typography>
+        </Box>
 
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Username"
-              variant="outlined"
-              margin="normal"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              autoFocus
-            />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Username"
+            variant="outlined"
+            required
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            autoFocus
+            sx={{ mb: 2 }}
+          />
 
-            <TextField
-              fullWidth
-              label="Password"
-              variant="outlined"
-              margin="normal"
-              required
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={togglePasswordVisibility}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <TextField
+            fullWidth
+            label="Password"
+            variant="outlined"
+            required
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            sx={{ mb: 1 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
 
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
+          {error && (
+            <Alert severity="error" sx={{ mt: 1.5 }}>
+              {error}
+            </Alert>
+          )}
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-              }}
-              size="large"
-              disabled={loading}
-            >
-              {loading ? "Signing In..." : "Sign In"}
-            </Button>
-          </form>
-        </Paper>
-      </Box>
-    </Container>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              py: 1.5,
+              fontSize: "1rem",
+              borderRadius: 3,
+            }}
+            size="large"
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Sign In"}
+          </Button>
+        </form>
+      </Paper>
+    </Box>
   );
 };
 
