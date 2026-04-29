@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Box,
   Grid,
@@ -14,6 +14,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useInfinitePoopRecords } from "../../hooks/useInfinitePoopData";
+import { PoopListFilters } from "../../services/poopApiService";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import PoopRecordCard from "./PoopRecordCard";
 import FastPhotoEditor from "../editor/FastPhotoEditor";
@@ -67,8 +68,40 @@ const PoopRecordsList: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { records, loading, loadingMore, error, hasMore, loadMore, refetch } =
-    useInfinitePoopRecords(100, bristolTypeFilter);
+  const filters = useMemo<PoopListFilters>(() => {
+    const f: PoopListFilters = {};
+    if (bristolTypeFilter !== undefined) f.bristolType = bristolTypeFilter;
+
+    if (additionalDetailsFilter === "blood") {
+      f.bloodPresent = true;
+    } else if (additionalDetailsFilter === "mucus") {
+      f.mucusPresent = true;
+    } else if (
+      additionalDetailsFilter === "color" ||
+      additionalDetailsFilter === "floating" ||
+      additionalDetailsFilter === "consistency" ||
+      additionalDetailsFilter === "health"
+    ) {
+      if (additionalDetailsValue !== "all") {
+        const n = Number(additionalDetailsValue);
+        if (!Number.isNaN(n)) {
+          f[additionalDetailsFilter] = n;
+        }
+      }
+    }
+    return f;
+  }, [bristolTypeFilter, additionalDetailsFilter, additionalDetailsValue]);
+
+  const {
+    records,
+    total,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    loadMore,
+    refetch,
+  } = useInfinitePoopRecords(100, filters);
 
   const { lastType } = useLastVerifiedBristolType();
 
@@ -87,7 +120,7 @@ const PoopRecordsList: React.FC = () => {
   );
 
   const handleRecordClick = (record: PoopRecord) => {
-    const index = filteredRecords.findIndex((r) => r.id === record.id);
+    const index = records.findIndex((r) => r.id === record.id);
     if (index !== -1) {
       setSelectedIndex(index);
       setEditorOpen(true);
@@ -130,48 +163,6 @@ const PoopRecordsList: React.FC = () => {
     additionalDetailsFilter === "health" ||
     additionalDetailsFilter === "color";
 
-  const filteredRecords = records.filter((record) => {
-    if (additionalDetailsFilter === "all") {
-      return true;
-    }
-
-    if (additionalDetailsFilter === "blood") {
-      return record.blood > 0;
-    }
-
-    if (additionalDetailsFilter === "mucus") {
-      return record.mucus > 0;
-    }
-
-    if (
-      (additionalDetailsFilter === "floating" ||
-        additionalDetailsFilter === "consistency" ||
-        additionalDetailsFilter === "health" ||
-        additionalDetailsFilter === "color") &&
-      additionalDetailsValue === "all"
-    ) {
-      return true;
-    }
-
-    if (additionalDetailsFilter === "floating") {
-      return record.floating === Number(additionalDetailsValue);
-    }
-
-    if (additionalDetailsFilter === "consistency") {
-      return record.consistency === Number(additionalDetailsValue);
-    }
-
-    if (additionalDetailsFilter === "health") {
-      return record.health === Number(additionalDetailsValue);
-    }
-
-    if (additionalDetailsFilter === "color") {
-      return record.color === Number(additionalDetailsValue);
-    }
-
-    return true;
-  });
-
   if (loading) {
     return (
       <Box
@@ -210,7 +201,7 @@ const PoopRecordsList: React.FC = () => {
           component="h1"
           sx={{ fontWeight: 600 }}
         >
-          Records ({filteredRecords.length})
+          Records ({total})
         </Typography>
         {isMobile && records.length > 0 && (
           <Typography
@@ -335,7 +326,7 @@ const PoopRecordsList: React.FC = () => {
         </Typography>
       </Box>
 
-      {filteredRecords.length === 0 ? (
+      {records.length === 0 ? (
         <Typography
           variant="body1"
           color="text.secondary"
@@ -346,7 +337,7 @@ const PoopRecordsList: React.FC = () => {
       ) : (
         <>
           <Grid container spacing={isMobile ? 1.5 : 3}>
-            {filteredRecords.map((record) => (
+            {records.map((record) => (
               <Grid item xs={12} sm={6} md={4} key={record.id}>
                 <PoopRecordCard
                   record={record}
@@ -360,7 +351,7 @@ const PoopRecordsList: React.FC = () => {
           {records.length > 0 && (
             <Box sx={{ mt: 4, mb: 2, textAlign: "center" }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Showing {filteredRecords.length} of {records.length} loaded
+                Showing {records.length} of {total} matching
               </Typography>
 
               {hasMore && (
@@ -400,7 +391,7 @@ const PoopRecordsList: React.FC = () => {
 
       <FastPhotoEditor
         open={editorOpen}
-        records={filteredRecords}
+        records={records}
         initialIndex={selectedIndex}
         onClose={handleEditorClose}
         onUpdate={handleRecordUpdate}

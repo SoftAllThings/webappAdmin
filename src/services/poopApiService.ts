@@ -6,25 +6,57 @@ import {
 } from "../types/poop";
 import { apiClient } from "./api.client";
 
+export interface PoopListFilters {
+  bristolType?: number;
+  color?: number;
+  floating?: number;
+  consistency?: number;
+  health?: number;
+  bloodPresent?: boolean;
+  mucusPresent?: boolean;
+}
+
 class PoopApiService {
   // Get all poop records with pagination
   async getAllPoops(
     page: number = 1,
     limit: number = 10,
-    bristolType?: number
+    filters: PoopListFilters = {}
   ): Promise<PoopListResponse> {
-    console.log("🚀 getAllPoops called with:", { page, limit, bristolType });
+    console.log("🚀 getAllPoops called with:", { page, limit, filters });
 
     // Wake up the service first (for Render free tier)
     await apiClient.wakeUpService();
     console.log("🎯 Wake-up complete, making data request");
 
-    let url = `/poop?page=${page}&limit=${limit}`;
-    if (bristolType !== undefined && bristolType !== null) {
-      url += `&bristol_type=${bristolType}`;
-      console.log("🔍 Adding bristol_type filter:", bristolType);
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (filters.bristolType !== undefined && filters.bristolType !== null) {
+      params.set("bristol_type", filters.bristolType.toString());
+    }
+    if (filters.color !== undefined && filters.color !== null) {
+      params.set("color", filters.color.toString());
+    }
+    if (filters.floating !== undefined && filters.floating !== null) {
+      params.set("floating", filters.floating.toString());
+    }
+    if (filters.consistency !== undefined && filters.consistency !== null) {
+      params.set("consistency", filters.consistency.toString());
+    }
+    if (filters.health !== undefined && filters.health !== null) {
+      params.set("health", filters.health.toString());
+    }
+    if (filters.bloodPresent) {
+      params.set("blood", "present");
+    }
+    if (filters.mucusPresent) {
+      params.set("mucus", "present");
     }
 
+    const url = `/poop?${params.toString()}`;
     console.log("📡 Final URL:", url);
     return apiClient.fetch<PoopListResponse>(url);
   }

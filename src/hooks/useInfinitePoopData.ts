@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { PoopRecord } from "../types/poop";
-import { poopApiService } from "../services/poopApiService";
+import { poopApiService, PoopListFilters } from "../services/poopApiService";
 
 interface UseInfinitePoopRecordsReturn {
   records: PoopRecord[];
+  total: number;
   loading: boolean;
   loadingMore: boolean;
   error: string | null;
@@ -14,8 +15,11 @@ interface UseInfinitePoopRecordsReturn {
 
 export const useInfinitePoopRecords = (
   limit: number = 100,
-  bristolType?: number
+  filters: PoopListFilters = {}
 ): UseInfinitePoopRecordsReturn => {
+  // Serialize filters so the reload effect fires on content change without
+  // forcing callers to memoize the object reference.
+  const filtersKey = JSON.stringify(filters);
   const [records, setRecords] = useState<PoopRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -66,7 +70,7 @@ export const useInfinitePoopRecords = (
         const response = await poopApiService.getAllPoops(
           pageNum,
           limit,
-          bristolType
+          filters
         );
         console.log("📦 API Response:", {
           dataLength: response.data?.length,
@@ -127,7 +131,8 @@ export const useInfinitePoopRecords = (
         isLoadingRef.current = false;
       }
     },
-    [limit, bristolType] // Include bristolType as dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [limit, filtersKey] // filtersKey covers `filters` content
   );
 
   const loadMore = useCallback(() => {
@@ -167,9 +172,9 @@ export const useInfinitePoopRecords = (
     fetchRecords(1, false);
   }, [fetchRecords]);
 
-  // Initial load and reload when bristolType changes
+  // Initial load and reload when filters change
   useEffect(() => {
-    console.log("🚀 useEffect triggered for bristolType:", bristolType);
+    console.log("🚀 useEffect triggered for filters:", filtersKey);
     setPage(1);
     currentPageRef.current = 1;
     setRecords([]);
@@ -179,10 +184,11 @@ export const useInfinitePoopRecords = (
     totalRef.current = 0;
     fetchRecords(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bristolType]); // Reload when bristolType changes
+  }, [filtersKey]); // Reload when any filter changes
 
   return {
     records,
+    total: totalRecords,
     loading,
     loadingMore,
     error,
