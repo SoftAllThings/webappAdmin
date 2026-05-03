@@ -17,6 +17,7 @@ import {
   BarChart,
   Insights as InsightsIcon,
   TrendingUp as TrendingUpIcon,
+  AutoAwesome as InsightsAgentIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
@@ -87,6 +88,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       id: "product-analytics" as TabId,
       label: "Product Analytics",
       icon: <TrendingUpIcon />,
+    },
+    {
+      id: "insights" as TabId,
+      label: "Insights",
+      icon: <InsightsAgentIcon />,
     },
     // { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];

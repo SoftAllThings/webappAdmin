@@ -17,6 +17,7 @@ import AIReviewView from "../views/AIReviewView";
 import AnalyticsView from "../views/AnalyticsView";
 import V2AnalyticsView from "../views/V2AnalyticsView";
 import ProductAnalyticsView from "../views/ProductAnalyticsView";
+import InsightsView from "../views/InsightsView";
 import BlogView from "../views/BlogView";
 import {
   Assessment as AIIcon,
@@ -145,6 +146,7 @@ const AppLayout: React.FC = () => {
           {currentTab === "analytics" && <AnalyticsView />}
           {currentTab === "v2-analytics" && <V2AnalyticsView />}
           {currentTab === "product-analytics" && <ProductAnalyticsView />}
+          {currentTab === "insights" && <InsightsView />}
           {currentTab === "blog" && <BlogView />}
         </Box>
       </Box>
