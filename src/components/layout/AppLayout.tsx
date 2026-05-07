@@ -128,7 +128,8 @@ const AppLayout: React.FC = () => {
           sx={{
             flexGrow: 1,
             width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-            pb: { xs: "120px", md: 0 },
+            pt: "env(safe-area-inset-top)",
+            pb: { xs: "calc(120px + env(safe-area-inset-bottom))", md: 0 },
             overflowX: "hidden",
           }}
         >
@@ -162,7 +163,7 @@ const AppLayout: React.FC = () => {
             zIndex: 1200,
             borderTop: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 0,
-            pb: "34px",
+            pb: "env(safe-area-inset-bottom)",
             backdropFilter: "blur(24px)",
             backgroundColor: "rgba(10, 14, 26, 0.85)",
           }}
