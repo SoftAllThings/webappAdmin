@@ -17,11 +17,10 @@ interface CropRect {
 }
 
 interface Props {
-  imageUrl: string;
   recordId: string;
 }
 
-const ImageCropTool: React.FC<Props> = ({ imageUrl, recordId }) => {
+const ImageCropTool: React.FC<Props> = ({ recordId }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -32,6 +31,31 @@ const ImageCropTool: React.FC<Props> = ({ imageUrl, recordId }) => {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let revokedUrl: string | null = null;
+    let cancelled = false;
+
+    poopApiService
+      .getImageBlobUrl(recordId)
+      .then((url) => {
+        if (cancelled) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+        revokedUrl = url;
+        setBlobUrl(url);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message || "Failed to load image");
+      });
+
+    return () => {
+      cancelled = true;
+      if (revokedUrl) URL.revokeObjectURL(revokedUrl);
+    };
+  }, [recordId]);
 
   const redraw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -149,9 +173,7 @@ const ImageCropTool: React.FC<Props> = ({ imageUrl, recordId }) => {
   const handleAnalyze = async () => {
     const base64 = getCroppedBase64();
     if (!base64) {
-      setError(
-        "Could not extract the crop. Make sure S3 CORS is configured to allow canvas access (Access-Control-Allow-Origin)."
-      );
+      setError("Could not extract the crop.");
       return;
     }
 
@@ -187,19 +209,16 @@ const ImageCropTool: React.FC<Props> = ({ imageUrl, recordId }) => {
   return (
     <Box>
       {/* Hidden source image for canvas drawing */}
-      <img
-        ref={imgRef}
-        src={imageUrl}
-        alt=""
-        crossOrigin="anonymous"
-        style={{ display: "none" }}
-        onLoad={handleImgLoad}
-        onError={() =>
-          setError(
-            "Could not load image for cropping. S3 CORS may not be configured."
-          )
-        }
-      />
+      {blobUrl && (
+        <img
+          ref={imgRef}
+          src={blobUrl}
+          alt=""
+          style={{ display: "none" }}
+          onLoad={handleImgLoad}
+          onError={() => setError("Could not load image for cropping.")}
+        />
+      )}
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
         Draw a rectangle to select the area you want to analyze.

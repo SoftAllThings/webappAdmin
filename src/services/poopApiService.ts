@@ -5,6 +5,7 @@ import {
   PoopDetailResponse,
 } from "../types/poop";
 import { apiClient } from "./api.client";
+import { API_BASE_URL, getAuthToken } from "./api.config";
 
 export interface PoopListFilters {
   bristolType?: number;
@@ -114,6 +115,20 @@ class PoopApiService {
       method: "PUT",
       body: JSON.stringify(data),
     });
+  }
+
+  // Fetch the record's image through the backend proxy and return a blob URL.
+  // Blob URLs are same-origin, so canvas reads work without S3 CORS.
+  async getImageBlobUrl(id: string): Promise<string> {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/poop/${id}/image`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to load image (${response.status})`);
+    }
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
   }
 
   // Send a cropped image for AI analysis

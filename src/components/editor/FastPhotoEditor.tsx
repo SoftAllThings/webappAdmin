@@ -1,6 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Box, Button, Grid, Typography, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material";
-import { Close, NavigateBefore, NavigateNext, CropFree } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from "@mui/material";
+import {
+  Close,
+  NavigateBefore,
+  NavigateNext,
+  CropFree,
+} from "@mui/icons-material";
 import ImageCropTool from "./ImageCropTool";
 import {
   PoopRecord,
@@ -299,7 +313,13 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <DialogTitle
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             Crop & Analyze
             <IconButton size="small" onClick={() => setCropOpen(false)}>
               <Close />
@@ -307,10 +327,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           </DialogTitle>
           <DialogContent>
             {formData.s3_url && currentRecord && (
-              <ImageCropTool
-                imageUrl={formData.s3_url}
-                recordId={currentRecord.id}
-              />
+              <ImageCropTool recordId={currentRecord.id} />
             )}
           </DialogContent>
         </Dialog>
@@ -335,8 +352,8 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                     formData.image_good_for_ml === null
                       ? ""
                       : formData.image_good_for_ml
-                      ? "true"
-                      : "false"
+                        ? "true"
+                        : "false"
                   }
                   options={ML_TRAINING_OPTIONS}
                   onChange={(value) => {
@@ -502,7 +519,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                       onChange={(value) =>
                         handleInputChange(
                           condition as keyof PoopRecord,
-                          Number(value)
+                          Number(value),
                         )
                       }
                       fullWidth

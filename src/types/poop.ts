@@ -178,7 +178,6 @@ export const COLOR_TYPES = {
   0: "Black",
   1: "White",
   2: "Green",
-  3: "Yellow",
   4: "Red",
   5: "Brown",
   6: "Orange",

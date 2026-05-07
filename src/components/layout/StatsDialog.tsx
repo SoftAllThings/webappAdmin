@@ -17,6 +17,8 @@ import {
   Close,
 } from "@mui/icons-material";
 
+const LAST_TRAINED_IMAGES = 4646;
+
 interface SummaryStats {
   totalPoops: number;
   handledPoops: number;
@@ -77,7 +79,7 @@ const StatsDialog = ({
           ) : (
             <>
               {summaryStats && (
-                <Box sx={{ mb: 3, p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
+                <Box sx={{ mb: 3, p: 2, bgcolor: "action.hover", borderRadius: 1 }}>
                   <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                     Dataset Overview
                   </Typography>
@@ -126,16 +128,60 @@ const StatsDialog = ({
                   </Typography>
                 )}
               </List>
-              {stats.length > 0 && (
-                <Box
-                  sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: "divider" }}
-                >
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    Total Ready for AI:{" "}
-                    {stats.reduce((sum, stat) => sum + stat.num, 0)}
-                  </Typography>
-                </Box>
-              )}
+              {stats.length > 0 && (() => {
+                const totalReadyForAI = stats.reduce(
+                  (sum, stat) => sum + stat.num,
+                  0
+                );
+                return (
+                  <>
+                    <Box
+                      sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: "divider" }}
+                    >
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        Total Ready for AI: {totalReadyForAI}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{ mt: 2, p: 2, bgcolor: "action.hover", borderRadius: 1 }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight={600}
+                        gutterBottom
+                      >
+                        Training Status
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: 1,
+                        }}
+                      >
+                        <Typography variant="body2">
+                          Last trained images:{" "}
+                          <strong>
+                            {LAST_TRAINED_IMAGES.toLocaleString()}
+                          </strong>
+                        </Typography>
+                        <Typography variant="body2">
+                          Total currently verified:{" "}
+                          <strong>{totalReadyForAI.toLocaleString()}</strong>
+                        </Typography>
+                        <Typography variant="body2">
+                          Verified since last training:{" "}
+                          <strong>
+                            {(
+                              totalReadyForAI - LAST_TRAINED_IMAGES
+                            ).toLocaleString()}
+                          </strong>
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </>
+                );
+              })()}
             </>
           )}
         </DialogContent>

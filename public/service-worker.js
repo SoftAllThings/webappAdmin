@@ -34,6 +34,11 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET") return;
 
+  // Don't intercept cross-origin requests (e.g. S3 images). The SW is for the
+  // app's own assets; cross-origin fetches have their own CORS rules and trying
+  // to refetch them here can turn a working no-cors <img> load into a CORS error.
+  if (new URL(request.url).origin !== self.location.origin) return;
+
   // API: network-first with cache fallback for offline use.
   if (request.url.includes("/api/")) {
     event.respondWith(
