@@ -56,6 +56,12 @@ const StatsDialog = ({
         onClose={handleCloseStats}
         maxWidth="sm"
         fullWidth
+        sx={{
+          "& .MuiDialog-container": {
+            pt: "env(safe-area-inset-top)",
+            pb: "env(safe-area-inset-bottom)",
+          },
+        }}
       >
         <DialogTitle
           sx={{

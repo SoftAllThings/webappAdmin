@@ -206,10 +206,10 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
     <Box
       sx={{
         position: "fixed",
-        top: 0,
+        top: "env(safe-area-inset-top)",
         left: 0,
         right: 0,
-        bottom: 0,
+        bottom: "env(safe-area-inset-bottom)",
         bgcolor: "background.default",
         zIndex: 1300,
       }}
@@ -264,7 +264,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
       <Box
         ref={contentRef}
         sx={{
-          height: "calc(100vh - 73px)",
+          height: "calc(100% - 73px)",
           overflowY: "auto",
         }}
       >
@@ -312,6 +312,12 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
           onClose={() => setCropOpen(false)}
           maxWidth="md"
           fullWidth
+          sx={{
+            "& .MuiDialog-container": {
+              pt: "env(safe-area-inset-top)",
+              pb: "env(safe-area-inset-bottom)",
+            },
+          }}
         >
           <DialogTitle
             sx={{
