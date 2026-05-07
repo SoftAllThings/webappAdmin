@@ -71,8 +71,12 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        html: {
+          backgroundColor: "#0a0e1a",
+        },
         body: {
           overflowX: "hidden",
+          backgroundColor: "#0a0e1a",
           background: "linear-gradient(180deg, #0a0e1a 0%, #0f1629 100%)",
         },
       },
