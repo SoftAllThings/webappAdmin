@@ -108,12 +108,13 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
     redraw();
   }, [redraw]);
 
-  const getPos = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const getPos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const r = canvasRef.current!.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
 
-  const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
     const p = getPos(e);
     startRef.current = p;
     setDrawing(true);
@@ -122,7 +123,7 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
     setError(null);
   };
 
-  const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!drawing || !startRef.current) return;
     const p = getPos(e);
     setRect({
@@ -133,7 +134,12 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
     });
   };
 
-  const onMouseUp = () => setDrawing(false);
+  const onPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    setDrawing(false);
+  };
 
   const getCroppedBase64 = (): string | null => {
     const canvas = canvasRef.current;
@@ -232,11 +238,12 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
             display: "block",
             border: "1px solid #444",
             maxWidth: "100%",
+            touchAction: "none",
           }}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseUp}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
         />
       </Box>
 
