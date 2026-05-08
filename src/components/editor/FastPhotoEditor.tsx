@@ -301,7 +301,7 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
                 fontSize: "0.7rem",
               }}
             >
-              Crop & Analyze
+              Crop
             </Button>
           </Box>
         )}
@@ -326,14 +326,25 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
               alignItems: "center",
             }}
           >
-            Crop & Analyze
+            Crop image
             <IconButton size="small" onClick={() => setCropOpen(false)}>
               <Close />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             {formData.s3_url && currentRecord && (
-              <ImageCropTool recordId={currentRecord.id} />
+              <ImageCropTool
+                recordId={currentRecord.id}
+                onSaved={(updated) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    s3_url: updated.s3_url,
+                    s3_key: updated.s3_key,
+                  }));
+                  setCropOpen(false);
+                  onUpdate();
+                }}
+              />
             )}
           </DialogContent>
         </Dialog>

@@ -131,18 +131,15 @@ class PoopApiService {
     return URL.createObjectURL(blob);
   }
 
-  // Send a cropped image for AI analysis
-  async analyzeCrop(
+  // Replace the record's image with a cropped version (uploads to S3, updates DB)
+  async replaceImage(
     id: string,
     imageBase64: string
-  ): Promise<{ success: boolean; data: { analysis: string } }> {
-    return apiClient.fetch<{ success: boolean; data: { analysis: string } }>(
-      `/poop/${id}/analyze-crop`,
-      {
-        method: "POST",
-        body: JSON.stringify({ imageBase64 }),
-      }
-    );
+  ): Promise<PoopDetailResponse> {
+    return apiClient.fetch<PoopDetailResponse>(`/poop/${id}/replace-image`, {
+      method: "POST",
+      body: JSON.stringify({ imageBase64 }),
+    });
   }
 
   // Search poop records with criteria

@@ -1,13 +1,8 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-  Paper,
-} from "@mui/material";
+import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { CropFree } from "@mui/icons-material";
 import { poopApiService } from "../../services/poopApiService";
+import { PoopRecord } from "../../types/poop";
 
 interface CropRect {
   x: number;
@@ -18,9 +13,10 @@ interface CropRect {
 
 interface Props {
   recordId: string;
+  onSaved?: (updated: PoopRecord) => void;
 }
 
-const ImageCropTool: React.FC<Props> = ({ recordId }) => {
+const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -28,8 +24,7 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
   const [drawing, setDrawing] = useState(false);
   const [rect, setRect] = useState<CropRect | null>(null);
   const [imgReady, setImgReady] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
 
@@ -176,24 +171,23 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleSave = async () => {
     const base64 = getCroppedBase64();
     if (!base64) {
       setError("Could not extract the crop.");
       return;
     }
 
-    setAnalyzing(true);
-    setResult(null);
+    setSaving(true);
     setError(null);
 
     try {
-      const data = await poopApiService.analyzeCrop(recordId, base64);
-      setResult(data.data.analysis);
+      const response = await poopApiService.replaceImage(recordId, base64);
+      onSaved?.(response.data);
     } catch (err: any) {
-      setError(err.message || "Analysis failed");
+      setError(err.message || "Save failed");
     } finally {
-      setAnalyzing(false);
+      setSaving(false);
     }
   };
 
@@ -227,7 +221,8 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
       )}
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-        Draw a rectangle to select the area you want to analyze.
+        Draw a rectangle to select the area you want to keep. The cropped image
+        will replace the current one.
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
@@ -253,7 +248,6 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
           variant="outlined"
           onClick={() => {
             setRect(null);
-            setResult(null);
             setError(null);
           }}
         >
@@ -262,17 +256,17 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
         <Button
           size="small"
           variant="contained"
-          disabled={!rect || rect.w < 5 || analyzing}
+          disabled={!rect || rect.w < 5 || saving}
           startIcon={
-            analyzing ? (
+            saving ? (
               <CircularProgress size={14} color="inherit" />
             ) : (
               <CropFree />
             )
           }
-          onClick={handleAnalyze}
+          onClick={handleSave}
         >
-          {analyzing ? "Analyzing…" : "Analyze Crop"}
+          {saving ? "Saving…" : "Save Crop"}
         </Button>
       </Box>
 
@@ -280,17 +274,6 @@ const ImageCropTool: React.FC<Props> = ({ recordId }) => {
         <Typography color="error" variant="body2" sx={{ mt: 2 }}>
           {error}
         </Typography>
-      )}
-
-      {result && (
-        <Paper variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-            AI Analysis
-          </Typography>
-          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-            {result}
-          </Typography>
-        </Paper>
       )}
     </Box>
   );
