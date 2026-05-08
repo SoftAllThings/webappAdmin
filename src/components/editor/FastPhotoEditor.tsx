@@ -336,11 +336,12 @@ const FastPhotoEditor: React.FC<FastPhotoEditorProps> = ({
               <ImageCropTool
                 recordId={currentRecord.id}
                 onSaved={(updated) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    s3_url: updated.s3_url,
-                    s3_key: updated.s3_key,
-                  }));
+                  setFormData((prev) => {
+                    const next: Partial<PoopRecord> = { ...prev };
+                    if (updated.s3_url !== undefined) next.s3_url = updated.s3_url;
+                    if (updated.s3_key !== undefined) next.s3_key = updated.s3_key;
+                    return next;
+                  });
                   setCropOpen(false);
                   onUpdate();
                 }}

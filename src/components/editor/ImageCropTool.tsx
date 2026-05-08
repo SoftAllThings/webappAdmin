@@ -77,7 +77,7 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
         rect.x,
         rect.y,
         rect.w,
-        rect.h
+        rect.h,
       );
 
       // Selection border
@@ -94,7 +94,7 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
         [rect.x, rect.y + rect.h],
         [rect.x + rect.w, rect.y + rect.h],
       ].forEach(([hx, hy]) =>
-        ctx.fillRect((hx as number) - s / 2, (hy as number) - s / 2, s, s)
+        ctx.fillRect((hx as number) - s / 2, (hy as number) - s / 2, s, s),
       );
     }
   }, [rect, imgReady]);
@@ -114,7 +114,6 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
     startRef.current = p;
     setDrawing(true);
     setRect({ x: p.x, y: p.y, w: 0, h: 0 });
-    setResult(null);
     setError(null);
   };
 
@@ -160,7 +159,7 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
       0,
       0,
       out.width,
-      out.height
+      out.height,
     );
 
     try {
@@ -183,7 +182,9 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
 
     try {
       const response = await poopApiService.replaceImage(recordId, base64);
-      onSaved?.(response.data);
+      if (response.data) {
+        onSaved?.(response.data);
+      }
     } catch (err: any) {
       setError(err.message || "Save failed");
     } finally {
@@ -198,7 +199,11 @@ const ImageCropTool: React.FC<Props> = ({ recordId, onSaved }) => {
 
     const maxW = Math.min(window.innerWidth - 80, 680);
     const maxH = Math.min(window.innerHeight - 320, 460);
-    const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
+    const ratio = Math.min(
+      maxW / img.naturalWidth,
+      maxH / img.naturalHeight,
+      1,
+    );
 
     canvas.width = Math.round(img.naturalWidth * ratio);
     canvas.height = Math.round(img.naturalHeight * ratio);
