@@ -14,6 +14,13 @@ export type EventSeriesPoint = {
   uniqueUsers: number;
 };
 
+export type EventBreakdownPoint = {
+  date: string;
+  value: string;
+  count: number;
+  uniqueUsers: number;
+};
+
 export type FunnelType = "signup" | "scan" | "paywall";
 
 export type FunnelStep = {
@@ -52,6 +59,18 @@ export const bqApi = {
   ): Promise<EventSeriesPoint[]> {
     const res = await apiClient.fetch<Envelope<EventSeriesPoint[]>>(
       `/bq/events/timeseries?${qs({ event, from, to })}`
+    );
+    return res.data;
+  },
+
+  async fetchEventBreakdownTimeseries(
+    event: string,
+    from: string,
+    to: string,
+    breakdown: string
+  ): Promise<EventBreakdownPoint[]> {
+    const res = await apiClient.fetch<Envelope<EventBreakdownPoint[]>>(
+      `/bq/events/timeseries?${qs({ event, from, to, breakdown })}`
     );
     return res.data;
   },

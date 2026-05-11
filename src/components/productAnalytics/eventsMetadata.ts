@@ -14,10 +14,21 @@ export type EventCategory =
   | "Sharing"
   | "Dashboard";
 
+export type EventBreakdownParam = {
+  key: string;
+  label: string;
+};
+
 export type EventMeta = {
   label: string;
   category: EventCategory;
   description: string;
+  /**
+   * Categorical / low-cardinality event_params that can usefully split the
+   * time-series into separate lines (e.g. card_type, plan, error_code).
+   * Numeric metrics like duration_ms are intentionally omitted.
+   */
+  breakdownParams?: EventBreakdownParam[];
 };
 
 export const EVENT_META: Record<string, EventMeta> = {
@@ -26,6 +37,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Onboarding step viewed",
     category: "Onboarding",
     description: "User swiped through a step of the intro carousel.",
+    breakdownParams: [{ key: "step", label: "Step" }],
   },
   pc_ob_completed: {
     label: "Onboarding completed",
@@ -36,6 +48,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Onboarding skipped",
     category: "Onboarding",
     description: "User skipped onboarding before reaching the end.",
+    breakdownParams: [{ key: "last_step", label: "Last step" }],
   },
 
   // ── Auth ────────────────────────────────────────────────────────────────────
@@ -43,31 +56,43 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Signup started",
     category: "Auth",
     description: "User tapped a signup option (email / Google / Apple).",
+    breakdownParams: [{ key: "method", label: "Method" }],
   },
   pc_auth_signup_completed: {
     label: "Signup completed",
     category: "Auth",
     description: "Firebase account created successfully. New user acquired.",
+    breakdownParams: [{ key: "method", label: "Method" }],
   },
   pc_auth_signup_failed: {
     label: "Signup failed",
     category: "Auth",
     description: "Signup attempt threw an error (validation / Firebase error).",
+    breakdownParams: [
+      { key: "method", label: "Method" },
+      { key: "error_code", label: "Error code" },
+    ],
   },
   pc_auth_login_started: {
     label: "Login started",
     category: "Auth",
     description: "Returning user tapped a login option.",
+    breakdownParams: [{ key: "method", label: "Method" }],
   },
   pc_auth_login_completed: {
     label: "Login completed",
     category: "Auth",
     description: "Returning user successfully signed in.",
+    breakdownParams: [{ key: "method", label: "Method" }],
   },
   pc_auth_login_failed: {
     label: "Login failed",
     category: "Auth",
     description: "Login attempt errored (wrong password, network, etc.).",
+    breakdownParams: [
+      { key: "method", label: "Method" },
+      { key: "error_code", label: "Error code" },
+    ],
   },
   pc_auth_logout: {
     label: "Logout",
@@ -96,6 +121,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Gallery photo picked",
     category: "Scan",
     description: "User selected a photo from the gallery (carries `uri_scheme`).",
+    breakdownParams: [{ key: "uri_scheme", label: "URI scheme" }],
   },
   pc_scan_gallery_cancelled: {
     label: "Gallery cancelled",
@@ -106,16 +132,22 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Preview resize started",
     category: "Scan",
     description: "Diagnostic — preview thumbnail resize began.",
+    breakdownParams: [{ key: "source", label: "Source" }],
   },
   pc_scan_preview_resize_failed: {
     label: "Preview resize failed",
     category: "Scan",
     description: "Diagnostic — preview thumbnail resize threw.",
+    breakdownParams: [
+      { key: "source", label: "Source" },
+      { key: "error_name", label: "Error name" },
+    ],
   },
   pc_scan_preview_load_failed: {
     label: "Preview load failed",
     category: "Scan",
     description: "Diagnostic — preview image failed to load on the result screen.",
+    breakdownParams: [{ key: "source", label: "Source" }],
   },
   pc_scan_crop_opened: {
     label: "Crop UI opened",
@@ -126,33 +158,45 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Crop failed",
     category: "Scan",
     description: "Crop step errored (carries `error_name`).",
+    breakdownParams: [{ key: "error_name", label: "Error name" }],
   },
   pc_scan_image_prep_started: {
     label: "Image prep started",
     category: "Scan",
     description:
       "Diagnostic — local image normalisation pipeline began (resize/compress before upload).",
+    breakdownParams: [{ key: "uri_scheme", label: "URI scheme" }],
   },
   pc_scan_image_prep_crop_failed: {
     label: "Image prep crop failed",
     category: "Scan",
     description: "Diagnostic — image-prep crop step failed.",
+    breakdownParams: [{ key: "error_name", label: "Error name" }],
   },
   pc_scan_image_prep_compress_failed: {
     label: "Image prep compress failed",
     category: "Scan",
     description: "Diagnostic — JPEG compression failed (carries `attempt`).",
+    breakdownParams: [
+      { key: "attempt", label: "Attempt" },
+      { key: "error_name", label: "Error name" },
+    ],
   },
   pc_scan_image_prep_fallback_raw: {
     label: "Image prep fell back to raw",
     category: "Scan",
     description:
       "Diagnostic — could not normalise image, sending raw bytes (Android API level recorded).",
+    breakdownParams: [
+      { key: "platform", label: "Platform" },
+      { key: "api_level", label: "API level" },
+    ],
   },
   pc_scan_image_prep_succeeded: {
     label: "Image prep succeeded",
     category: "Scan",
     description: "Diagnostic — image normalisation finished (carries `duration_ms`).",
+    breakdownParams: [{ key: "used_raw_fallback", label: "Used raw fallback" }],
   },
   pc_scan_analyze_request_started: {
     label: "Analyze request started",
@@ -169,6 +213,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Result edit action",
     category: "Scan",
     description: "User performed crop/rotate/download on a result image.",
+    breakdownParams: [{ key: "action", label: "Action" }],
   },
   pc_scan_questions_started: {
     label: "Lifestyle wizard started",
@@ -185,6 +230,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Lifestyle wizard abandoned",
     category: "Scan",
     description: "User exited the lifestyle wizard before finishing (carries `last_step`).",
+    breakdownParams: [{ key: "last_step", label: "Last step" }],
   },
   pc_scan_analysis_started: {
     label: "Analysis started",
@@ -215,32 +261,38 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Paywall",
     description:
       "Paywall screen opened. Includes a `source` param telling where the user came from.",
+    breakdownParams: [{ key: "source", label: "Source" }],
   },
   pc_pw_plan_selected: {
     label: "Plan selected",
     category: "Paywall",
     description: "User tapped the monthly or annual plan tile.",
+    breakdownParams: [{ key: "plan", label: "Plan" }],
   },
   pc_pw_purchase_initiated: {
     label: "Purchase initiated",
     category: "Paywall",
     description: "User tapped the buy button — Apple/Google sheet is about to open.",
+    breakdownParams: [{ key: "plan", label: "Plan" }],
   },
   pc_pw_purchase_completed: {
     label: "Purchase completed",
     category: "Paywall",
     description:
       "RevenueCat confirmed a successful purchase. Revenue-bearing event.",
+    breakdownParams: [{ key: "plan", label: "Plan" }],
   },
   pc_pw_purchase_failed: {
     label: "Purchase failed",
     category: "Paywall",
     description: "Purchase errored or was cancelled by the user.",
+    breakdownParams: [{ key: "error", label: "Error" }],
   },
   pc_pw_dismissed: {
     label: "Paywall dismissed",
     category: "Paywall",
     description: "User closed the paywall without purchasing (carries `source`).",
+    breakdownParams: [{ key: "source", label: "Source" }],
   },
 
   // ── Chat ────────────────────────────────────────────────────────────────────
@@ -248,6 +300,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     label: "Chat opened",
     category: "Chat",
     description: "Chat modal opened (carries `source`).",
+    breakdownParams: [{ key: "source", label: "Source" }],
   },
   pc_chat_message_sent: {
     label: "Chat message sent",
@@ -318,6 +371,10 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Navigation",
     description:
       "Screen-level navigation event (carries `screen_name` and `screen_class`). Fires on every screen change.",
+    breakdownParams: [
+      { key: "screen_name", label: "Screen name" },
+      { key: "screen_class", label: "Screen class" },
+    ],
   },
 
   // ── Notifications ───────────────────────────────────────────────────────────
@@ -336,6 +393,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Notifications",
     description:
       "User tapped a push notification (cold start or background).",
+    breakdownParams: [{ key: "notification_type", label: "Notification type" }],
   },
 
   // ── Errors ──────────────────────────────────────────────────────────────────
@@ -350,6 +408,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Errors",
     description:
       "AI analysis threw or timed out. Carries an `error_code` param (network, backend, cancelled, etc.).",
+    breakdownParams: [{ key: "error_code", label: "Error code" }],
   },
 
   // ── System / Stability ──────────────────────────────────────────────────────
@@ -358,18 +417,24 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "System",
     description:
       "App launched (carries `cold_start` and `heap_max_mb`). Useful for stability/perf cohorting.",
+    breakdownParams: [{ key: "cold_start", label: "Cold start" }],
   },
   pc_sys_memory_warning: {
     label: "Memory warning",
     category: "System",
     description:
       "OS issued a memory warning (carries `level: moderate|critical` and originating `screen`).",
+    breakdownParams: [
+      { key: "level", label: "Level" },
+      { key: "screen", label: "Screen" },
+    ],
   },
   pc_sys_oom_near: {
     label: "OOM near",
     category: "System",
     description:
       "Heap usage approached the OOM ceiling (carries `used_mb`, `max_mb`, `screen`).",
+    breakdownParams: [{ key: "screen", label: "Screen" }],
   },
 
   // ── Account / Settings ──────────────────────────────────────────────────────
@@ -383,11 +448,13 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Account",
     description:
       "User updated a lifestyle profile field (carries `field`). Drives personalised analysis.",
+    breakdownParams: [{ key: "field", label: "Field" }],
   },
   pc_acct_account_updated: {
     label: "Account field updated",
     category: "Account",
     description: "User updated an account profile field (carries `field`).",
+    breakdownParams: [{ key: "field", label: "Field" }],
   },
   pc_acct_widget_added: {
     label: "Home-screen widget added",
@@ -453,6 +520,7 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Sharing",
     description:
       "User shared a scan result through the system share sheet (carries `method`).",
+    breakdownParams: [{ key: "method", label: "Method" }],
   },
   pc_share_referral_sent: {
     label: "Referral sent",
@@ -466,12 +534,14 @@ export const EVENT_META: Record<string, EventMeta> = {
     category: "Dashboard",
     description:
       "User saw a card in the profile premium carousel (carries `card_type`: gut_score, action_to_consider, habit_improvement, digestive_report, gut_intelligence, lifetime_deal). Deduplicated per swipe.",
+    breakdownParams: [{ key: "card_type", label: "Card type" }],
   },
   pc_dash_card_tapped: {
     label: "Dashboard card tapped",
     category: "Dashboard",
     description:
       "User tapped into a card in the profile premium carousel (carries `card_type`).",
+    breakdownParams: [{ key: "card_type", label: "Card type" }],
   },
 };
 
@@ -485,6 +555,10 @@ export function getEventDescription(eventName: string): string {
 
 export function getEventCategory(eventName: string): EventCategory | "Other" {
   return EVENT_META[eventName]?.category ?? "Other";
+}
+
+export function getEventBreakdownParams(eventName: string): EventBreakdownParam[] {
+  return EVENT_META[eventName]?.breakdownParams ?? [];
 }
 
 export const CATEGORY_ORDER: EventCategory[] = [
