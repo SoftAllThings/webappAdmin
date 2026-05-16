@@ -19,12 +19,15 @@ import V2AnalyticsView from "../views/V2AnalyticsView";
 import ProductAnalyticsView from "../views/ProductAnalyticsView";
 import InsightsView from "../views/InsightsView";
 import BlogView from "../views/BlogView";
+import ChatView from "../views/ChatView";
+import ModelComparisonView from "../views/ModelComparisonView";
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
   Insights as InsightsIcon,
   TrendingUp as TrendingUpIcon,
   MoreHoriz as MoreIcon,
+  Chat as AnalystIcon,
   BarChart,
   LogoutOutlined,
 } from "@mui/icons-material";
@@ -148,7 +151,9 @@ const AppLayout: React.FC = () => {
           {currentTab === "v2-analytics" && <V2AnalyticsView />}
           {currentTab === "product-analytics" && <ProductAnalyticsView />}
           {currentTab === "insights" && <InsightsView />}
+          {currentTab === "analyst" && <ChatView />}
           {currentTab === "blog" && <BlogView />}
+          {currentTab === "model-comparison" && <ModelComparisonView />}
         </Box>
       </Box>
 
@@ -217,6 +222,15 @@ const AppLayout: React.FC = () => {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         transformOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
+        <MenuItem
+          onClick={() => {
+            setMoreAnchor(null);
+            setCurrentTab("analyst");
+          }}
+        >
+          <ListItemIcon><AnalystIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Analyst</ListItemText>
+        </MenuItem>
         <MenuItem
           onClick={() => {
             setMoreAnchor(null);

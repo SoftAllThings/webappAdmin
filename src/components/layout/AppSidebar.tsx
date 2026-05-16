@@ -18,6 +18,8 @@ import {
   Insights as InsightsIcon,
   TrendingUp as TrendingUpIcon,
   AutoAwesome as InsightsAgentIcon,
+  Chat as AnalystIcon,
+  Compare as CompareIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
@@ -93,6 +95,16 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       id: "insights" as TabId,
       label: "Insights",
       icon: <InsightsAgentIcon />,
+    },
+    {
+      id: "analyst" as TabId,
+      label: "Analyst",
+      icon: <AnalystIcon />,
+    },
+    {
+      id: "model-comparison" as TabId,
+      label: "Model Comparison",
+      icon: <CompareIcon />,
     },
     // { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
