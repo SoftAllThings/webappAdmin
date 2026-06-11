@@ -68,6 +68,8 @@ class PoopApiService {
   }
 
   async getLastTypeVerified(): Promise<{ data: { bristol_type: number } }> {
+    // Shares the in-flight wake-up with getAllPoops (fired in parallel)
+    await apiClient.wakeUpService();
     return apiClient.fetch<{ data: { bristol_type: number } }>(
       `/poop/lastTypeVerified`
     );

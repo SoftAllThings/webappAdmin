@@ -1,49 +1,59 @@
 import { API_BASE_URL, getAuthToken, removeAuthToken, isProduction } from "./api.config";
 
 class ApiClient {
-  private isWakeUpAttempted = false;
+  private wakeUpPromise: Promise<void> | null = null;
 
-  // Wake up the service if it's sleeping (Render free tier)
-  async wakeUpService(): Promise<void> {
+  // Wake up the service if it's sleeping (Render free tier). Parallel callers
+  // share the same in-flight poll; a successful wake is cached for the session.
+  wakeUpService(): Promise<void> {
     if (!isProduction()) {
       console.log("🏠 Local development mode - skipping wake-up");
-      return;
+      return Promise.resolve();
     }
-
-    console.log("🔄 Attempting to wake up service...");
-
-    if (this.isWakeUpAttempted) {
-      console.log("⏭️ Wake up already attempted, skipping");
-      return;
+    if (!this.wakeUpPromise) {
+      this.wakeUpPromise = this.pollHealthUntilReady();
     }
+    return this.wakeUpPromise;
+  }
 
-    try {
-      this.isWakeUpAttempted = true;
-      console.log("📡 Sending wake-up request to:", `${API_BASE_URL}/health`);
+  // Poll /health until the backend reports 200 (server up AND database
+  // connected — each poll also warms a DB connection server-side).
+  // Budget ~54s worst case: a cold Render dyno alone can take 30-60s to boot.
+  private async pollHealthUntilReady(): Promise<void> {
+    const maxAttempts = 8;
+    const attemptTimeoutMs = 5000;
+    const delayMs = 2000;
 
-      const response = await fetch(`${API_BASE_URL}/health`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      console.log("📥 Wake-up response status:", response.status);
-
-      if (response.ok) {
-        console.log("✅ Service is awake and responding");
-      } else {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
         console.log(
-          "⚠️ Service responded but with error status:",
-          response.status
+          `📡 Wake-up attempt ${attempt}/${maxAttempts}:`,
+          `${API_BASE_URL}/health`
         );
+        const response = await fetch(`${API_BASE_URL}/health`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(attemptTimeoutMs),
+        });
+        if (response.ok) {
+          console.log("✅ Service is awake and database is connected");
+          return;
+        }
+        // 503 = server up but DB still warming → keep polling
+        console.log("⚠️ Service responded with status:", response.status);
+      } catch (error) {
+        // Abort or network error: dyno may still be booting → keep polling
+        console.log("⏳ Wake-up attempt failed, service might be starting...");
       }
-    } catch (error) {
-      console.log(
-        "❌ Wake up attempt failed, service might be starting...",
-        error
-      );
-      console.log("⏰ Waiting 3 seconds for service to start...");
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
     }
+
+    // Give up but resolve anyway — backend per-request retries are the next
+    // safety net. Reset so a later user action can re-attempt the wake.
+    console.log("❌ Wake-up budget exhausted, proceeding with requests");
+    this.wakeUpPromise = null;
   }
 
   async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
