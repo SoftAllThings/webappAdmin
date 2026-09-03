@@ -20,6 +20,7 @@ import ProductAnalyticsView from "../views/ProductAnalyticsView";
 import InsightsView from "../views/InsightsView";
 import BlogView from "../views/BlogView";
 import ChatView from "../views/ChatView";
+import ExportView from "../views/ExportView";
 import ModelComparisonView from "../views/ModelComparisonView";
 import {
   Assessment as AIIcon,
@@ -28,6 +29,7 @@ import {
   TrendingUp as TrendingUpIcon,
   MoreHoriz as MoreIcon,
   Chat as AnalystIcon,
+  Download as ExportIcon,
   BarChart,
   LogoutOutlined,
 } from "@mui/icons-material";
@@ -154,6 +156,7 @@ const AppLayout: React.FC = () => {
           {currentTab === "analyst" && <ChatView />}
           {currentTab === "blog" && <BlogView />}
           {currentTab === "model-comparison" && <ModelComparisonView />}
+          {currentTab === "export" && <ExportView />}
         </Box>
       </Box>
 
@@ -230,6 +233,15 @@ const AppLayout: React.FC = () => {
         >
           <ListItemIcon><AnalystIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Analyst</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMoreAnchor(null);
+            setCurrentTab("export");
+          }}
+        >
+          <ListItemIcon><ExportIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Export</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {

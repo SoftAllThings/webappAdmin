@@ -19,6 +19,7 @@ import {
   TrendingUp as TrendingUpIcon,
   AutoAwesome as InsightsAgentIcon,
   Chat as AnalystIcon,
+  Download as ExportIcon,
   Compare as CompareIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
@@ -105,6 +106,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       id: "model-comparison" as TabId,
       label: "Model Comparison",
       icon: <CompareIcon />,
+    },
+    {
+      id: "export" as TabId,
+      label: "Export",
+      icon: <ExportIcon />,
     },
     // { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
