@@ -73,6 +73,15 @@ const TrainingRunCard: React.FC<{ run: TrainingRun; isLatest: boolean }> = ({
             color={scoreColor(m.composite)}
             label={`composite ${num(m.composite)}`}
           />
+          {d.gold_set_excluded ? (
+            <Tooltip title="Benchmark gold set was held out of training — this run's benchmark numbers can be published">
+              <Chip size="small" color="success" variant="outlined" label="publishable" />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Gold set was NOT held out — this run trained on benchmark images, so its benchmark numbers are not publishable">
+              <Chip size="small" color="error" variant="outlined" label="not publishable" />
+            </Tooltip>
+          )}
           <Box flexGrow={1} />
           <Typography variant="caption" color="text.secondary">
             {new Date(run.created_at).toLocaleString()}
@@ -150,7 +159,13 @@ const TrainingRunCard: React.FC<{ run: TrainingRun; isLatest: boolean }> = ({
   );
 };
 
-const BenchmarkCard: React.FC<{ bench: BenchmarkRun }> = ({ bench }) => {
+const BenchmarkCard: React.FC<{
+  bench: BenchmarkRun;
+  linkedRun?: TrainingRun | undefined;
+}> = ({
+  bench,
+  linkedRun,
+}) => {
   // Highest composite first — this is the leaderboard ordering.
   const rows = useMemo(
     () =>
@@ -173,9 +188,18 @@ const BenchmarkCard: React.FC<{ bench: BenchmarkRun }> = ({ bench }) => {
           )}
           <Box flexGrow={1} />
           <Typography variant="caption" color="text.secondary">
-            {bench.scored_at ?? ""}
+            scored {bench.scored_at ?? "—"}
           </Typography>
         </Stack>
+
+        {linkedRun && !linkedRun.dataset?.gold_set_excluded && (
+          <Alert severity="error" icon={<WarningIcon />} sx={{ mt: 1.5 }}>
+            The <b>poopcheck</b> row is not publishable: training run{" "}
+            <b>{linkedRun.run_id}</b> did not hold out the gold set, so it was
+            scored partly on images it trained on. Its numbers here are
+            inflated by memorisation — the frontier-model rows are unaffected.
+          </Alert>
+        )}
 
         <Box sx={{ overflowX: "auto", mt: 1.5 }}>
           <Table size="small">
@@ -190,6 +214,7 @@ const BenchmarkCard: React.FC<{ bench: BenchmarkRun }> = ({ bench }) => {
                 ))}
                 <TableCell align="right">blood recall</TableCell>
                 <TableCell align="right">refusals</TableCell>
+                <TableCell align="right">predicted</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -211,6 +236,21 @@ const BenchmarkCard: React.FC<{ bench: BenchmarkRun }> = ({ bench }) => {
                     </Tooltip>
                   </TableCell>
                   <TableCell align="right">{pct(score.refusal_rate, 0)}</TableCell>
+                  <TableCell align="right">
+                    {/* Predictions can long predate the scoring run; a stale
+                        row is otherwise indistinguishable from a fresh one. */}
+                    {score.predicted_at && bench.scored_at &&
+                     score.predicted_at !== bench.scored_at ? (
+                      <Tooltip title={`These predictions were generated on ${score.predicted_at}, before this scoring run — they may come from an older model.`}>
+                        <Chip size="small" color="warning" variant="outlined"
+                              label={score.predicted_at} />
+                      </Tooltip>
+                    ) : (
+                      <Typography variant="caption" color="text.secondary">
+                        {score.predicted_at ?? "—"}
+                      </Typography>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -296,7 +336,13 @@ const MLRunsView: React.FC = () => {
           <code>python benchmark/score.py --run-id &lt;id&gt; --publish</code>.
         </Alert>
       ) : (
-        benches.map((b) => <BenchmarkCard key={b.run_id} bench={b} />)
+        benches.map((b) => (
+          <BenchmarkCard
+            key={b.run_id}
+            bench={b}
+            linkedRun={runs.find((r) => r.run_id === b.model_run_id)}
+          />
+        ))
       )}
     </Container>
   );

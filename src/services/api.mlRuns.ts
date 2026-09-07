@@ -17,6 +17,8 @@ export interface TrainingRun {
     rows?: number;
     csv_md5?: string;
     n_groups?: number;
+    gold_set_excluded?: boolean;
+    publishable_benchmark?: boolean;
     bristol_distribution?: Record<string, number>;
     color_distribution?: Record<string, number>;
   };
@@ -44,6 +46,8 @@ export interface TrainingRun {
 export interface BenchmarkModelScore {
   composite: number;
   images?: number;
+  /** When these predictions were generated — may long predate scored_at. */
+  predicted_at?: string;
   refusal_rate?: number;
   fields: Record<
     string,
