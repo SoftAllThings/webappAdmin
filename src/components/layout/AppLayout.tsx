@@ -22,6 +22,7 @@ import BlogView from "../views/BlogView";
 import ChatView from "../views/ChatView";
 import ExportView from "../views/ExportView";
 import ModelComparisonView from "../views/ModelComparisonView";
+import MLRunsView from "../views/MLRunsView";
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
@@ -156,6 +157,7 @@ const AppLayout: React.FC = () => {
           {currentTab === "analyst" && <ChatView />}
           {currentTab === "blog" && <BlogView />}
           {currentTab === "model-comparison" && <ModelComparisonView />}
+          {currentTab === "ml-runs" && <MLRunsView />}
           {currentTab === "export" && <ExportView />}
         </Box>
       </Box>

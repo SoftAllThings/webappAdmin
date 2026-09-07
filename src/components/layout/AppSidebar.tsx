@@ -21,6 +21,7 @@ import {
   Chat as AnalystIcon,
   Download as ExportIcon,
   Compare as CompareIcon,
+  Science as ScienceIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
@@ -101,6 +102,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       id: "analyst" as TabId,
       label: "Analyst",
       icon: <AnalystIcon />,
+    },
+    {
+      id: "ml-runs" as TabId,
+      label: "Training & Benchmarks",
+      icon: <ScienceIcon />,
     },
     {
       id: "model-comparison" as TabId,
