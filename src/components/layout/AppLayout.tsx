@@ -23,6 +23,7 @@ import ChatView from "../views/ChatView";
 import ExportView from "../views/ExportView";
 import ModelComparisonView from "../views/ModelComparisonView";
 import MLRunsView from "../views/MLRunsView";
+import DataSamplesView from "../views/DataSamplesView";
 import {
   Assessment as AIIcon,
   Analytics as AnalyticsIcon,
@@ -31,6 +32,7 @@ import {
   MoreHoriz as MoreIcon,
   Chat as AnalystIcon,
   Download as ExportIcon,
+  PhotoLibrary as DataSamplesIcon,
   BarChart,
   LogoutOutlined,
 } from "@mui/icons-material";
@@ -137,6 +139,10 @@ const AppLayout: React.FC = () => {
             pt: "env(safe-area-inset-top)",
             pb: { xs: "calc(120px + env(safe-area-inset-bottom))", md: 0 },
             overflowX: "hidden",
+            // `clip` hides overflow just the same without turning <main> into a
+            // scroll container — which silently disables position: sticky in
+            // every view rendered inside it.
+            "@supports (overflow-x: clip)": { overflowX: "clip" },
           }}
         >
           {currentTab === "ai-review" && (
@@ -159,6 +165,7 @@ const AppLayout: React.FC = () => {
           {currentTab === "model-comparison" && <ModelComparisonView />}
           {currentTab === "ml-runs" && <MLRunsView />}
           {currentTab === "export" && <ExportView />}
+          {currentTab === "data-samples" && <DataSamplesView />}
         </Box>
       </Box>
 
@@ -244,6 +251,15 @@ const AppLayout: React.FC = () => {
         >
           <ListItemIcon><ExportIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Export</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMoreAnchor(null);
+            setCurrentTab("data-samples");
+          }}
+        >
+          <ListItemIcon><DataSamplesIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Data Samples</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {

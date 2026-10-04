@@ -22,6 +22,7 @@ import {
   Download as ExportIcon,
   Compare as CompareIcon,
   Science as ScienceIcon,
+  PhotoLibrary as DataSamplesIcon,
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useNavigation } from "../../contexts/NavigationContext";
@@ -117,6 +118,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       id: "export" as TabId,
       label: "Export",
       icon: <ExportIcon />,
+    },
+    {
+      id: "data-samples" as TabId,
+      label: "Data Samples",
+      icon: <DataSamplesIcon />,
     },
     // { id: "blog" as TabId, label: "Blog", icon: <BlogIcon /> },
   ];
